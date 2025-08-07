@@ -190,6 +190,25 @@
         .main-tab:hover {
             color: var(--text-color);
         }
+        .tab-content {
+            display: block;
+        }
+        .tab-content.hidden {
+            display: none;
+        }
+        .play-all-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+        .play-all-btn:hover {
+            background-color: #7c3aed;
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -412,6 +431,10 @@
     let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
     let sleepTimer = null;
     let sleepTimerSeconds = 0;
+    let currentTrack = null; // Store current track data
+    let lastPlaylistData = null; // Store last fetched playlist data
+    let lastPlayerTab = 'now-playing'; // Store last active player tab
+    let currentPlaylistSource = null; // Track where the current playlist came from
     
     // --- DOM Element Helpers ---
     const G = id => document.getElementById(id);
@@ -503,6 +526,7 @@
                 throw new Error(errData.error || `Request failed with status ${response.status}`);
             }
             const data = await response.json();
+            lastPlaylistData = data; // Store the playlist data
             renderPlaylist(data);
             updateSearchHistory(scUrl);
         } catch (err) {
@@ -561,6 +585,7 @@
                 originalPlaylist = [...tracks];
                 currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
                 const newIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+                currentPlaylistSource = 'search';
                 playTrack(newIndex);
             });
             
@@ -625,6 +650,13 @@
             return;
         }
         
+        // Add "Play All" button
+        const playAllBtn = document.createElement('div');
+        playAllBtn.className = 'play-all-btn flex items-center justify-center gap-2';
+        playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Favorites';
+        playAllBtn.addEventListener('click', playAllFavorites);
+        container.appendChild(playAllBtn);
+        
         favoriteTracksData.forEach((track, index) => {
             const el = document.createElement('div');
             el.className = 'favorite-track-item p-3 rounded-lg flex items-center gap-4';
@@ -651,12 +683,10 @@
             `;
             
             el.addEventListener('click', (e) => {
-                if (e.target.closest('.remove-favorite-btn') || e.target.closest('.download-btn')) return;
+                if (e.target.closest('.remove-favorite-btn') || e.target.closest('.download-btn') || e.target.closest('.play-all-btn')) return;
                 
-                // Create a temporary playlist with just this track
-                currentPlaylist = [track];
-                originalPlaylist = [track];
-                playTrack(0);
+                // Play all favorites starting from the selected track
+                playFavoritesFromIndex(index);
             });
             
             el.querySelector('.remove-favorite-btn').addEventListener('click', (e) => {
@@ -686,6 +716,7 @@
         
         currentTrackIndex = index;
         const track = currentPlaylist[index];
+        currentTrack = track; // Store current track
         
         // Show loading indicator
         G('player-loading-indicator').classList.remove('hidden');
@@ -697,6 +728,9 @@
         // Update favorite button state
         updateFavoriteButton(track.track_url);
         
+        // Update player UI immediately
+        updatePlayerUI(track);
+        
         audio.play().catch(e => {
             console.error("Autoplay was prevented:", e);
             showToast("Playback was prevented. Please interact with the player first.");
@@ -704,9 +738,43 @@
         
         // Show player
         G('persistent-player-container').classList.add('show');
-        updatePlayerUI(track);
         highlightActiveTrack();
         renderPlaylistTab();
+    };
+    
+    const playAllFavorites = () => {
+        if (favoriteTracksData.length === 0) {
+            showToast("No favorites to play");
+            return;
+        }
+        
+        // Set playlist to all favorites
+        originalPlaylist = [...favoriteTracksData];
+        currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+        currentPlaylistSource = 'favorites';
+        currentTrackIndex = 0;
+        
+        // Play the first track
+        playTrack(0);
+        showToast("Playing all favorites");
+    };
+    
+    const playFavoritesFromIndex = (index) => {
+        if (favoriteTracksData.length === 0 || index < 0 || index >= favoriteTracksData.length) {
+            return;
+        }
+        
+        // Set playlist to all favorites
+        originalPlaylist = [...favoriteTracksData];
+        currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+        currentPlaylistSource = 'favorites';
+        
+        // Find the selected track in the (potentially shuffled) playlist
+        const selectedTrack = favoriteTracksData[index];
+        currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === selectedTrack.track_url);
+        
+        // Play the selected track
+        playTrack(currentTrackIndex);
     };
     
     const playNext = () => {
@@ -768,17 +836,24 @@
     // --- Player UI Updates ---
     function updatePlayerUI(track) {
         const thumb = track.thumb || '';
-        [G('player-thumb-mini'), G('player-thumb-expanded')].forEach(el => { el.src = thumb; });
-        G('player-title-mini').textContent = track.title;
-        G('player-title-expanded').textContent = track.title;
-        G('player-performer-mini').textContent = track.performer;
-        G('player-performer-expanded').textContent = track.performer;
+        [G('player-thumb-mini'), G('player-thumb-expanded')].forEach(el => { 
+            if (el) el.src = thumb; 
+        });
+        
+        if (G('player-title-mini')) G('player-title-mini').textContent = track.title;
+        if (G('player-title-expanded')) G('player-title-expanded').textContent = track.title;
+        if (G('player-performer-mini')) G('player-performer-mini').textContent = track.performer;
+        if (G('player-performer-expanded')) G('player-performer-expanded').textContent = track.performer;
     }
     
     function setPlayPauseIcons(paused) {
         const iconClass = paused ? 'fa-play' : 'fa-pause';
-        G('player-play-pause-btn-mini').innerHTML = `<i class="fas ${iconClass}"></i>`;
-        G('player-play-pause-btn-expanded').innerHTML = `<i class="fas ${iconClass}"></i>`;
+        if (G('player-play-pause-btn-mini')) {
+            G('player-play-pause-btn-mini').innerHTML = `<i class="fas ${iconClass}"></i>`;
+        }
+        if (G('player-play-pause-btn-expanded')) {
+            G('player-play-pause-btn-expanded').innerHTML = `<i class="fas ${iconClass}"></i>`;
+        }
     }
     
     function highlightActiveTrack() {
@@ -791,7 +866,7 @@
         // Highlight in favorites list
         document.querySelectorAll('#favorites-container .favorite-track-item').forEach(el => el.classList.remove('active'));
         
-        if (currentTrackIndex > -1) {
+        if (currentTrackIndex > -1 && currentPlaylist[currentTrackIndex]) {
             const activeTrackUrl = currentPlaylist[currentTrackIndex].track_url;
             
             // Find and highlight in main playlist
@@ -810,7 +885,7 @@
             // Highlight in favorites tab if it's a favorite
             const favoriteIndex = favoriteTracksData.findIndex(t => t.track_url === activeTrackUrl);
             if (favoriteIndex !== -1) {
-                const favoriteListItem = document.querySelector(`#favorites-container .favorite-track-item:nth-child(${favoriteIndex + 1})`);
+                const favoriteListItem = document.querySelector(`#favorites-container .favorite-track-item:nth-child(${favoriteIndex + 2})`); // +2 because of the "Play All" button
                 favoriteListItem?.classList.add('active');
             }
         }
@@ -861,6 +936,34 @@
         if (!G('favorites-tab').classList.contains('hidden')) {
             renderFavoritesTab();
         }
+        
+        // If current playlist is from favorites and we removed a track, update the playlist
+        if (currentPlaylistSource === 'favorites' && index > -1) {
+            // Find the track in the current playlist and remove it
+            const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+            if (playlistIndex !== -1) {
+                currentPlaylist.splice(playlistIndex, 1);
+                originalPlaylist.splice(playlistIndex, 1);
+                
+                // Adjust current track index if needed
+                if (currentTrackIndex > playlistIndex) {
+                    currentTrackIndex--;
+                } else if (currentTrackIndex === playlistIndex) {
+                    // If we removed the currently playing track, stop playback
+                    if (currentTrackIndex >= currentPlaylist.length) {
+                        currentTrackIndex = currentPlaylist.length - 1;
+                    }
+                    if (currentTrackIndex >= 0) {
+                        playTrack(currentTrackIndex);
+                    } else {
+                        audio.pause();
+                        currentTrack = null;
+                    }
+                }
+                
+                renderPlaylistTab();
+            }
+        }
     }
     
     function removeFavorite(index) {
@@ -898,6 +1001,34 @@
             btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
             btn.classList.toggle('text-red-500', isFav);
         });
+        
+        // If current playlist is from favorites and we removed a track, update the playlist
+        if (currentPlaylistSource === 'favorites') {
+            // Find the track in the current playlist and remove it
+            const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+            if (playlistIndex !== -1) {
+                currentPlaylist.splice(playlistIndex, 1);
+                originalPlaylist.splice(playlistIndex, 1);
+                
+                // Adjust current track index if needed
+                if (currentTrackIndex > playlistIndex) {
+                    currentTrackIndex--;
+                } else if (currentTrackIndex === playlistIndex) {
+                    // If we removed the currently playing track, stop playback
+                    if (currentTrackIndex >= currentPlaylist.length) {
+                        currentTrackIndex = currentPlaylist.length - 1;
+                    }
+                    if (currentTrackIndex >= 0) {
+                        playTrack(currentTrackIndex);
+                    } else {
+                        audio.pause();
+                        currentTrack = null;
+                    }
+                }
+                
+                renderPlaylistTab();
+            }
+        }
     }
     
     function updateFavoriteButton(trackUrl) {
@@ -905,12 +1036,16 @@
         const iconClass = isFavorite ? 'fas' : 'far';
         
         // Update mini player favorite button
-        G('player-favorite-btn-mini').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-        G('player-favorite-btn-mini').classList.toggle('active', isFavorite);
+        if (G('player-favorite-btn-mini')) {
+            G('player-favorite-btn-mini').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
+            G('player-favorite-btn-mini').classList.toggle('active', isFavorite);
+        }
         
         // Update expanded player favorite button
-        G('player-favorite-btn-expanded').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-        G('player-favorite-btn-expanded').classList.toggle('active', isFavorite);
+        if (G('player-favorite-btn-expanded')) {
+            G('player-favorite-btn-expanded').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
+            G('player-favorite-btn-expanded').classList.toggle('active', isFavorite);
+        }
     }
     
     // --- Sleep Timer ---
@@ -978,6 +1113,9 @@
                 // Special handling for favorites tab
                 if (tabName === 'favorites') {
                     renderFavoritesTab();
+                } else if (tabName === 'search' && lastPlaylistData) {
+                    // Restore last playlist data when switching back to search tab
+                    renderPlaylist(lastPlaylistData);
                 }
             });
         });
@@ -999,27 +1137,65 @@
         // Player expansion/minimization
         G('minimized-player').addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
+            
+            // Store current player tab before expanding
+            const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
+            if (activeTabButton) {
+                lastPlayerTab = activeTabButton.dataset.tab;
+            }
+            
             G('persistent-player-container').classList.add('expanded');
+            
+            // Ensure player UI is updated when expanding
+            if (currentTrack) {
+                updatePlayerUI(currentTrack);
+            }
+            
+            // Always switch to "Now Playing" tab when expanding
+            switchPlayerTab('now-playing');
         });
         
         G('minimize-btn').addEventListener('click', () => {
+            // Store current player tab before minimizing
+            const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
+            if (activeTabButton) {
+                lastPlayerTab = activeTabButton.dataset.tab;
+            }
+            
             G('persistent-player-container').classList.remove('expanded');
+            
+            // Ensure player UI is updated when minimizing
+            if (currentTrack) {
+                updatePlayerUI(currentTrack);
+            }
         });
         
         // Tab switching in player
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', () => {
                 const tabName = btn.dataset.tab;
-                
-                // Hide all tabs
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-                
-                // Show selected tab
-                G(`${tabName}-tab`).classList.remove('hidden');
-                btn.classList.add('active');
+                switchPlayerTab(tabName);
             });
         });
+        
+        // Function to switch player tabs
+        function switchPlayerTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('#expanded-player .tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            
+            // Show selected tab
+            G(`${tabName}-tab`).classList.remove('hidden');
+            document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Store the active tab
+            lastPlayerTab = tabName;
+            
+            // Special handling for playlist tab
+            if (tabName === 'playlist') {
+                renderPlaylistTab();
+            }
+        }
         
         // Player Controls
         [G('player-play-pause-btn-mini'), G('player-play-pause-btn-expanded')].forEach(btn => {
@@ -1040,7 +1216,7 @@
         // Favorite buttons
         [G('player-favorite-btn-mini'), G('player-favorite-btn-expanded')].forEach(btn => {
             btn.addEventListener('click', () => {
-                if (currentTrackIndex !== -1) {
+                if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
                     toggleFavorite(currentPlaylist[currentTrackIndex]);
                 }
             });
@@ -1048,7 +1224,7 @@
         
         // Share button
         G('player-share-btn').addEventListener('click', () => {
-            if (currentTrackIndex !== -1) {
+            if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
                 const track = currentPlaylist[currentTrackIndex];
                 if (navigator.share) {
                     navigator.share({
