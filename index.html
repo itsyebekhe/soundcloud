@@ -627,6 +627,28 @@
             background-color: rgba(255, 255, 255, 0.1);
             margin: 0.5rem 0;
         }
+
+        /* Footer Styles */
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        footer a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        footer a:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 
@@ -722,6 +744,24 @@
             </div>
 
         </div>
+        <!-- Footer -->
+        <footer class="mt-8 mb-4 text-center text-sm" style="color: var(--hint-color);">
+            <p class="mb-2">Created with ❤️ by YEBEKHE</p>
+            <div class="flex justify-center gap-4">
+                <a href="https://t.me/yebekhe" target="_blank" class="hover:text-white transition-colors"
+                    title="Telegram">
+                    <i class="fab fa-telegram text-xl"></i>
+                </a>
+                <a href="https://twitter.com/yebekhe" target="_blank" class="hover:text-white transition-colors"
+                    title="X (Twitter)">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="https://github.com/itsyebekhe/soundcloud/" target="_blank"
+                    class="hover:text-white transition-colors" title="GitHub">
+                    <i class="fab fa-github text-xl"></i>
+                </a>
+            </div>
+        </footer>
     </div>
 
     <!-- Player starts here, initially hidden -->
