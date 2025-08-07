@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -14,114 +15,203 @@
             --bg-color: #121212;
             --text-color: #ffffff;
             --hint-color: #a1a1aa;
-            --primary-color: #8b5cf6; /* A nice purple */
+            --primary-color: #8b5cf6;
+            /* A nice purple */
             --primary-text-color: #ffffff;
             --secondary-bg-color: #1f1f23;
         }
-        html, body { 
-            overscroll-behavior: none; /* Prevents "pull-to-refresh" on mobile */
+
+        html,
+        body {
+            overscroll-behavior: none;
+            /* Prevents "pull-to-refresh" on mobile */
         }
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            overflow: hidden; 
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        #main-content { 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            padding-bottom: 150px; /* Space for the player */
+
+        #main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 150px;
+            /* Space for the player */
         }
-        .form-input, .btn-secondary { 
-            background-color: var(--secondary-bg-color); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
+
+        .form-input,
+        .btn-secondary {
+            background-color: var(--secondary-bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .btn-primary { 
-            background-color: var(--primary-color); 
-            color: var(--primary-text-color); 
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--primary-text-color);
         }
+
         .btn-primary:disabled {
             background-color: #583c9c;
             cursor: not-allowed;
         }
-        .track-item, .playlist-track-item, .favorite-track-item { 
-            cursor: pointer; 
-            transition: all 0.2s; 
+
+        .track-item,
+        .playlist-track-item,
+        .favorite-track-item,
+        .history-track-item {
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .track-item:hover, .playlist-track-item:hover, .favorite-track-item:hover { 
-            background-color: rgba(255, 255, 255, 0.05); 
-            transform: translateY(-2px); 
+
+        .track-item:hover,
+        .playlist-track-item:hover,
+        .favorite-track-item:hover,
+        .history-track-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
         }
-        .track-item.active, .playlist-track-item.active, .favorite-track-item.active { 
-            background-color: var(--primary-color) !important; 
+
+        .track-item.active,
+        .playlist-track-item.active,
+        .favorite-track-item.active,
+        .history-track-item.active {
+            background-color: var(--primary-color) !important;
         }
-        .track-item.active p, .playlist-track-item.active p, .favorite-track-item.active p { 
-            color: var(--primary-text-color) !important; 
+
+        .track-item.active p,
+        .playlist-track-item.active p,
+        .favorite-track-item.active p,
+        .history-track-item.active p {
+            color: var(--primary-text-color) !important;
         }
+
         /* Player Styling */
-        #persistent-player-container { 
+        #persistent-player-container {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             z-index: 40;
-            background: linear-gradient(to top, var(--secondary-bg-color), rgba(31, 31, 35, 0.95)); 
+            background: linear-gradient(to top, var(--secondary-bg-color), rgba(31, 31, 35, 0.95));
             backdrop-filter: blur(10px);
             transform: translateY(100%);
             transition: transform 0.3s ease-in-out;
         }
+
         #persistent-player-container.show {
             transform: translateY(0);
         }
-        #persistent-player-container.expanded { 
+
+        #persistent-player-container.expanded {
             transform: translateY(0);
             top: 0;
             height: 100%;
             z-index: 50;
             background: linear-gradient(135deg, #1f1f24, #121216);
         }
-        .progress-bar-container { 
-            background-color: rgba(255, 255, 255, 0.1); 
-            cursor: pointer; 
-            height: 6px; 
-            border-radius: 3px; 
+
+        .progress-bar-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            height: 6px;
+            border-radius: 3px;
         }
+
         .progress-bar-container:hover {
             height: 8px;
         }
-        .progress-bar-filled { 
-            background-color: var(--primary-color); 
-            height: 100%; 
-            border-radius: 3px; 
-            position: relative; 
-            pointer-events: none; 
+
+        .progress-bar-filled {
+            background-color: var(--primary-color);
+            height: 100%;
+            border-radius: 3px;
+            position: relative;
+            pointer-events: none;
         }
-        .progress-bar-filled::after { 
-            content: ''; 
-            position: absolute; 
-            right: -6px; top: -3px; 
-            width: 12px; height: 12px; 
-            border-radius: 50%; 
-            background-color: var(--primary-text-color); 
+
+        .progress-bar-filled::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: -3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-text-color);
         }
-        .player-controls button { transition: all 0.2s; }
-        .player-controls button:hover { transform: scale(1.1); }
-        .player-controls button:active { transform: scale(0.95); }
-        .repeat-btn.active, .shuffle-btn.active { color: var(--primary-color); }
-        .tab-button { transition: all 0.3s; color: var(--hint-color); }
-        .tab-button.active { border-bottom: 2px solid var(--primary-color); color: var(--text-color); }
-        .volume-slider { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; width: 100px; }
-        .volume-slider::-webkit-slider-runnable-track { background: rgba(255, 255, 255, 0.2); height: 4px; border-radius: 2px; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; background: var(--primary-color); height: 14px; width: 14px; border-radius: 50%; margin-top: -5px; }
-        .favorite-btn.active { color: #ef4444; }
-        .history-item { transition: all 0.2s; }
-        .history-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+        .player-controls button {
+            transition: all 0.2s;
+        }
+
+        .player-controls button:hover {
+            transform: scale(1.1);
+        }
+
+        .player-controls button:active {
+            transform: scale(0.95);
+        }
+
+        .repeat-btn.active,
+        .shuffle-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-button {
+            transition: all 0.3s;
+            color: var(--hint-color);
+        }
+
+        .tab-button.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+            width: 100px;
+        }
+
+        .volume-slider::-webkit-slider-runnable-track {
+            background: rgba(255, 255, 255, 0.2);
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--primary-color);
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            margin-top: -5px;
+        }
+
+        .favorite-btn.active {
+            color: #ef4444;
+        }
+
+        .history-item {
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
         .tooltip {
             position: relative;
         }
+
         .tooltip::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -138,29 +228,45 @@
             pointer-events: none;
             transition: opacity 0.3s;
         }
+
         .tooltip:hover::after {
             opacity: 1;
         }
+
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
         }
+
         .loading-track {
             animation: pulse 1.5s infinite;
         }
+
         #minimized-player {
             display: block;
         }
+
         #expanded-player {
             display: none;
         }
+
         #persistent-player-container.expanded #minimized-player {
             display: none;
         }
+
         #persistent-player-container.expanded #expanded-player {
             display: flex;
         }
+
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -170,11 +276,13 @@
             color: var(--hint-color);
             padding: 2rem 0;
         }
+
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 1rem;
             opacity: 0.5;
         }
+
         .main-tab {
             padding: 0.75rem 1rem;
             font-weight: 500;
@@ -183,19 +291,24 @@
             border-bottom: 2px solid transparent;
             color: var(--hint-color);
         }
+
         .main-tab.active {
             color: var(--text-color);
             border-bottom-color: var(--primary-color);
         }
+
         .main-tab:hover {
             color: var(--text-color);
         }
+
         .tab-content {
             display: block;
         }
+
         .tab-content.hidden {
             display: none;
         }
+
         .play-all-btn {
             background-color: var(--primary-color);
             color: white;
@@ -206,32 +319,345 @@
             transition: all 0.2s;
             margin-bottom: 1rem;
         }
+
         .play-all-btn:hover {
             background-color: #7c3aed;
         }
+
+        .playlist-item {
+            background-color: var(--secondary-bg-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .playlist-item:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .playlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .playlist-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .playlist-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .playlist-track-count {
+            font-size: 0.8rem;
+            color: var(--hint-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .create-playlist-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .create-playlist-btn:hover {
+            background-color: #7c3aed;
+        }
+
+        .queue-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: var(--secondary-bg-color);
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .queue-item:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .queue-item.dragging {
+            opacity: 0.5;
+        }
+
+        .queue-item-handle {
+            cursor: grab;
+            margin-right: 0.75rem;
+            color: var(--hint-color);
+        }
+
+        .queue-item-handle:active {
+            cursor: grabbing;
+        }
+
+        .queue-item-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .queue-item-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .queue-item-artist {
+            font-size: 0.8rem;
+            color: var(--hint-color);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .queue-item-duration {
+            margin-left: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--hint-color);
+        }
+
+        .queue-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-left: 0.75rem;
+        }
+
+        .queue-add-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .queue-add-btn:hover {
+            background-color: #7c3aed;
+        }
+
+        .settings-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+        }
+
+        .settings-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .settings-label {
+            color: var(--text-color);
+        }
+
+        .settings-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--hint-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--text-color);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: var(--secondary-bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--primary-text-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #7c3aed;
+        }
+
+        .context-menu {
+            position: absolute;
+            background-color: var(--secondary-bg-color);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+            min-width: 200px;
+            overflow: hidden;
+        }
+
+        .context-menu-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .context-menu-item:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .context-menu-divider {
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin: 0.5rem 0;
+        }
     </style>
 </head>
+
 <body class="font-sans">
     <div id="main-content">
         <div class="container mx-auto p-4 max-w-2xl">
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">SoundCloud Player</h1>
+                <h1
+                    class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
+                    SoundCloud Player</h1>
                 <p class="text-sm mt-2" style="color: var(--hint-color);">Paste a link to fetch and play music</p>
             </div>
-            
+
             <!-- Main Navigation Tabs -->
             <div class="flex border-b border-white/10 mb-4">
                 <button class="main-tab flex-1 text-center active" data-tab="search">Search</button>
                 <button class="main-tab flex-1 text-center" data-tab="favorites">Favorites</button>
+                <button class="main-tab flex-1 text-center" data-tab="playlists">Playlists</button>
+                <button class="main-tab flex-1 text-center" data-tab="history">History</button>
             </div>
-            
+
             <!-- Search Tab Content -->
             <div id="search-tab" class="tab-content">
                 <div class="flex gap-2 mb-4">
-                    <input id="sc-url-input" type="text" placeholder="https://soundcloud.com/..." class="form-input w-full p-3 rounded-lg border-none focus:ring-2 focus:ring-violet-500 focus:outline-none">
-                    <button id="fetch-btn" class="btn-primary font-bold py-3 px-5 rounded-lg whitespace-nowrap flex items-center justify-center gap-2"><i class="fas fa-search"></i> Fetch</button>
+                    <input id="sc-url-input" type="text" placeholder="https://soundcloud.com/..."
+                        class="form-input w-full p-3 rounded-lg border-none focus:ring-2 focus:ring-violet-500 focus:outline-none">
+                    <button id="fetch-btn"
+                        class="btn-primary font-bold py-3 px-5 rounded-lg whitespace-nowrap flex items-center justify-center gap-2"><i
+                            class="fas fa-search"></i> Fetch</button>
                 </div>
-                
+
                 <!-- Search History -->
                 <div id="search-history" class="mb-4 hidden">
                     <div class="flex justify-between items-center mb-2">
@@ -240,14 +666,20 @@
                     </div>
                     <div id="history-container" class="flex flex-wrap gap-2"></div>
                 </div>
-                
-                <div id="loader" class="text-center my-8 hidden"><div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div><p class="mt-3" style="color: var(--hint-color);">Loading tracks...</p></div>
-                <div id="error-display" class="bg-red-900/50 text-red-300 p-4 rounded-lg my-4 hidden flex items-start gap-3"><i class="fas fa-exclamation-circle mt-1"></i><span id="error-message"></span></div>
-                
+
+                <div id="loader" class="text-center my-8 hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto">
+                    </div>
+                    <p class="mt-3" style="color: var(--hint-color);">Loading tracks...</p>
+                </div>
+                <div id="error-display"
+                    class="bg-red-900/50 text-red-300 p-4 rounded-lg my-4 hidden flex items-start gap-3"><i
+                        class="fas fa-exclamation-circle mt-1"></i><span id="error-message"></span></div>
+
                 <div id="playlist-header" class="mt-6 hidden"></div>
                 <div id="playlist-container" class="mt-2 space-y-2"></div>
             </div>
-            
+
             <!-- Favorites Tab Content -->
             <div id="favorites-tab" class="tab-content hidden">
                 <div id="favorites-container" class="space-y-2">
@@ -258,9 +690,40 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Playlists Tab Content -->
+            <div id="playlists-tab" class="tab-content hidden">
+                <button id="create-playlist-btn" class="create-playlist-btn">
+                    <i class="fas fa-plus"></i> Create New Playlist
+                </button>
+                <div id="playlists-container" class="space-y-2">
+                    <div class="empty-state">
+                        <i class="fas fa-list"></i>
+                        <p>No playlists yet</p>
+                        <p class="text-sm mt-2">Create a new playlist to organize your favorite tracks</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab Content -->
+            <div id="history-tab" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold">Recently Played</h2>
+                    <button id="clear-playback-history" class="text-sm" style="color: var(--hint-color);">Clear
+                        History</button>
+                </div>
+                <div id="history-tracks-container" class="space-y-2">
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No playback history yet</p>
+                        <p class="text-sm mt-2">Your recently played tracks will appear here</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-    
+
     <!-- Player starts here, initially hidden -->
     <div id="persistent-player-container">
         <!-- Minimized Player View -->
@@ -268,7 +731,8 @@
             <div class="max-w-2xl mx-auto flex items-center gap-3">
                 <div class="relative">
                     <img id="player-thumb-mini" class="w-12 h-12 rounded-md shadow-lg bg-gray-700">
-                    <div id="player-loading-indicator" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md hidden">
+                    <div id="player-loading-indicator"
+                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md hidden">
                         <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
                     </div>
                 </div>
@@ -284,21 +748,25 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Expanded Player View -->
-        <div id="expanded-player" class="p-4 max-w-2xl mx-auto w-full h-full flex flex-col justify-between items-center">
-            <button id="minimize-btn" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white"><i class="fas fa-chevron-down text-xl"></i></button>
+        <div id="expanded-player"
+            class="p-4 max-w-2xl mx-auto w-full h-full flex flex-col justify-between items-center">
+            <button id="minimize-btn" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white"><i
+                    class="fas fa-chevron-down text-xl"></i></button>
             <div class="w-full flex mb-4 border-b border-white/10">
-                <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="now-playing">Now Playing</button>
-                <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="playlist">Playlist</button>
+                <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="now-playing">Now
+                    Playing</button>
+                <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="queue">Queue</button>
                 <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="settings">Settings</button>
             </div>
-            
+
             <!-- Now Playing Content -->
             <div id="now-playing-tab" class="tab-content w-full flex flex-col items-center justify-center flex-grow">
                 <div class="relative mb-8">
                     <img id="player-thumb-expanded" class="w-64 h-64 mx-auto rounded-2xl shadow-2xl bg-gray-800">
-                    <div id="player-loading-indicator-expanded" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-2xl hidden">
+                    <div id="player-loading-indicator-expanded"
+                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-2xl hidden">
                         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
                     </div>
                 </div>
@@ -307,7 +775,8 @@
                     <p id="player-performer-expanded" class="text-lg mt-1" style="color: var(--hint-color);"></p>
                 </div>
                 <div class="flex gap-4 mt-2">
-                    <button id="player-favorite-btn-expanded" class="favorite-btn p-3 text-2xl tooltip" data-tooltip="Favorite">
+                    <button id="player-favorite-btn-expanded" class="favorite-btn p-3 text-2xl tooltip"
+                        data-tooltip="Favorite">
                         <i class="far fa-heart"></i>
                     </button>
                     <button id="player-share-btn" class="p-3 text-2xl tooltip" data-tooltip="Share">
@@ -315,19 +784,40 @@
                     </button>
                 </div>
             </div>
-            
-            <!-- Playlist "Up Next" Content -->
-            <div id="playlist-tab" class="tab-content w-full hidden flex-grow overflow-y-auto">
-                 <div id="playlist-tracks-container" class="space-y-2 pr-2"></div>
+
+            <!-- Queue Content -->
+            <div id="queue-tab" class="tab-content w-full hidden flex-grow overflow-y-auto">
+                <div id="player-queue-container" class="space-y-2 pr-2"></div>
             </div>
-            
+
             <!-- Settings Tab -->
             <div id="settings-tab" class="tab-content w-full hidden flex-grow overflow-y-auto">
                 <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">Sleep Timer</h3>
+                    <div class="settings-section">
+                        <h3 class="settings-title">Playback Settings</h3>
+                        <div class="settings-control">
+                            <span class="settings-label">Crossfade</span>
+                            <div class="settings-value">
+                                <input type="range" id="crossfade-slider" class="volume-slider" min="0" max="10"
+                                    value="0" step="0.5">
+                                <span id="crossfade-value">0s</span>
+                            </div>
+                        </div>
+                        <div class="settings-control">
+                            <span class="settings-label">Gapless Playback</span>
+                            <div class="settings-value">
+                                <label class="switch">
+                                    <input type="checkbox" id="gapless-playback">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">Sleep Timer</h3>
                         <div class="flex items-center gap-3">
-                            <select id="sleep-timer-select" class="form-input p-2 rounded-lg flex-grow">
+                            <select id="sleep-timer-select" class="form-select p-2 rounded-lg flex-grow">
                                 <option value="0">Off</option>
                                 <option value="300">5 minutes</option>
                                 <option value="600">10 minutes</option>
@@ -339,9 +829,9 @@
                         </div>
                         <div id="sleep-timer-status" class="mt-2 text-sm" style="color: var(--hint-color);"></div>
                     </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">Keyboard Shortcuts</h3>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">Keyboard Shortcuts</h3>
                         <div class="space-y-2 text-sm" style="color: var(--hint-color);">
                             <div class="flex justify-between">
                                 <span>Play/Pause</span>
@@ -373,18 +863,18 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold mb-3">About</h3>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">About</h3>
                         <p class="text-sm" style="color: var(--hint-color);">
-                            SoundCloud Web Player v1.0<br>
+                            SoundCloud Web Player v1.3<br>
                             This player uses the SoundCloud API to stream music.<br>
                             No tracks are stored on our servers.
                         </p>
                     </div>
                 </div>
             </div>
-            
+
             <!-- All Player Controls grouped at the bottom -->
             <div class="w-full mt-auto">
                 <div class="w-full mt-4">
@@ -397,11 +887,17 @@
                     </div>
                 </div>
                 <div class="player-controls flex items-center justify-around mt-4 w-full text-gray-300">
-                    <button id="player-shuffle-btn" class="shuffle-btn p-3 tooltip" data-tooltip="Shuffle"><i class="fas fa-random text-lg"></i></button>
-                    <button id="player-prev-btn" class="p-3 tooltip" data-tooltip="Previous"><i class="fas fa-step-backward text-2xl"></i></button>
-                    <button id="player-play-pause-btn-expanded" class="p-5 w-16 h-16 rounded-full btn-primary text-2xl flex items-center justify-center" title="Play/Pause"></button>
-                    <button id="player-next-btn" class="p-3 tooltip" data-tooltip="Next"><i class="fas fa-step-forward text-2xl"></i></button>
-                    <button id="player-repeat-btn" class="repeat-btn p-3 tooltip" data-tooltip="Repeat"><i class="fas fa-redo text-lg"></i></button>
+                    <button id="player-shuffle-btn" class="shuffle-btn p-3 tooltip" data-tooltip="Shuffle"><i
+                            class="fas fa-random text-lg"></i></button>
+                    <button id="player-prev-btn" class="p-3 tooltip" data-tooltip="Previous"><i
+                            class="fas fa-step-backward text-2xl"></i></button>
+                    <button id="player-play-pause-btn-expanded"
+                        class="p-5 w-16 h-16 rounded-full btn-primary text-2xl flex items-center justify-center"
+                        title="Play/Pause"></button>
+                    <button id="player-next-btn" class="p-3 tooltip" data-tooltip="Next"><i
+                            class="fas fa-step-forward text-2xl"></i></button>
+                    <button id="player-repeat-btn" class="repeat-btn p-3 tooltip" data-tooltip="Repeat"><i
+                            class="fas fa-redo text-lg"></i></button>
                 </div>
                 <div class="flex items-center justify-between mt-4 text-lg text-gray-400">
                     <i class="fas fa-volume-down"></i>
@@ -411,978 +907,1763 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50"></div>
-    
+    <div id="toast"
+        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    </div>
+
+    <!-- Create Playlist Modal -->
+    <div id="create-playlist-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create New Playlist</h2>
+                <button class="modal-close" id="close-create-playlist-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="playlist-name">Playlist Name</label>
+                <input type="text" id="playlist-name" class="form-input" placeholder="My Awesome Playlist">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="playlist-description">Description (Optional)</label>
+                <textarea id="playlist-description" class="form-input" rows="3"
+                    placeholder="Describe your playlist..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancel-create-playlist">Cancel</button>
+                <button class="btn btn-primary" id="confirm-create-playlist">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add to Playlist Modal -->
+    <div id="add-to-playlist-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add to Playlist</h2>
+                <button class="modal-close" id="close-add-to-playlist-modal">&times;</button>
+            </div>
+            <div id="playlist-options-container" class="space-y-2">
+                <!-- Playlist options will be dynamically added here -->
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" id="cancel-add-to-playlist">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div id="context-menu" class="context-menu hidden">
+        <div class="context-menu-item" id="ctx-play-next">
+            <i class="fas fa-play"></i> Play Next
+        </div>
+        <div class="context-menu-item" id="ctx-play-later">
+            <i class="fas fa-plus"></i> Add to Queue
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="ctx-add-to-playlist">
+            <i class="fas fa-plus"></i> Add to Playlist
+        </div>
+        <div class="context-menu-item" id="ctx-toggle-favorite">
+            <i class="far fa-heart"></i> Add to Favorites
+        </div>
+        <div class="context-menu-divider"></div>
+        <div class="context-menu-item" id="ctx-download">
+            <i class="fas fa-download"></i> Download
+        </div>
+    </div>
+
     <audio id="audio-element" class="hidden" preload="metadata"></audio>
-    
-<script>
-    // --- Configuration & Global State ---
-    const API_BASE_URL = 'https://scdlapi.yebekhe.workers.dev';
-    let currentPlaylist = [];
-    let originalPlaylist = []; // To restore from shuffle
-    let currentTrackIndex = -1;
-    let repeatMode = 'none'; // 'none', 'all', 'one'
-    let isShuffle = false;
-    let isDraggingProgress = false;
-    let favoriteTracks = JSON.parse(localStorage.getItem('favoriteTracks') || '[]');
-    let favoriteTracksData = JSON.parse(localStorage.getItem('favoriteTracksData') || '[]'); // Store track data for favorites
-    let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
-    let sleepTimer = null;
-    let sleepTimerSeconds = 0;
-    let currentTrack = null; // Store current track data
-    let lastPlaylistData = null; // Store last fetched playlist data
-    let lastPlayerTab = 'now-playing'; // Store last active player tab
-    let currentPlaylistSource = null; // Track where the current playlist came from
-    
-    // --- DOM Element Helpers ---
-    const G = id => document.getElementById(id);
-    const audio = G('audio-element');
-    
-    // --- Utility Functions ---
-    const showToast = (message, duration = 3000) => {
-        const toast = G('toast');
-        toast.textContent = message;
-        toast.style.opacity = '1';
-        toast.style.pointerEvents = 'auto';
-        
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.pointerEvents = 'none';
-        }, duration);
-    };
-    
-    const formatTime = s => isNaN(s) ? '0:00' : `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-    
-    const updateSearchHistory = (url) => {
-        if (!url) return;
-        
-        // Remove if already exists
-        searchHistory = searchHistory.filter(item => item !== url);
-        
-        // Add to beginning
-        searchHistory.unshift(url);
-        
-        // Keep only last 5
-        if (searchHistory.length > 5) {
-            searchHistory = searchHistory.slice(0, 5);
-        }
-        
-        // Save to localStorage
-        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-        
-        // Update UI
-        renderSearchHistory();
-    };
-    
-    const renderSearchHistory = () => {
-        const historyContainer = G('history-container');
-        const searchHistoryDiv = G('search-history');
-        
-        if (searchHistory.length === 0) {
-            searchHistoryDiv.classList.add('hidden');
-            return;
-        }
-        
-        searchHistoryDiv.classList.remove('hidden');
-        historyContainer.innerHTML = '';
-        
-        searchHistory.forEach(url => {
-            const item = document.createElement('div');
-            item.className = 'history-item px-3 py-1 rounded-lg text-sm cursor-pointer';
-            item.style.backgroundColor = 'var(--secondary-bg-color)';
-            item.textContent = url.length > 30 ? url.substring(0, 30) + '...' : url;
-            item.addEventListener('click', () => {
-                G('sc-url-input').value = url;
-                handleFetch();
-            });
-            historyContainer.appendChild(item);
-        });
-    };
-    
-    // --- API Fetch Logic ---
-    async function handleFetch() {
-        const urlInput = G('sc-url-input');
-        const fetchBtn = G('fetch-btn');
-        const loader = G('loader');
-        const errorDisplay = G('error-display');
-        const playlistContainer = G('playlist-container');
-        const playlistHeader = G('playlist-header');
-        
-        const scUrl = urlInput.value.trim();
-        if (!scUrl) return;
-        
-        loader.classList.remove('hidden');
-        errorDisplay.classList.add('hidden');
-        playlistContainer.innerHTML = '';
-        playlistHeader.classList.add('hidden');
-        fetchBtn.disabled = true;
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/fetch-info?url=${encodeURIComponent(scUrl)}`);
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.error || `Request failed with status ${response.status}`);
+
+    <script>
+        // --- Configuration & Global State ---
+        const API_BASE_URL = 'https://scdlapi.yebekhe.workers.dev';
+        let currentPlaylist = [];
+        let originalPlaylist = []; // To restore from shuffle
+        let currentTrackIndex = -1;
+        let repeatMode = 'none'; // 'none', 'all', 'one'
+        let isShuffle = false;
+        let isDraggingProgress = false;
+        let favoriteTracks = JSON.parse(localStorage.getItem('favoriteTracks') || '[]');
+        let favoriteTracksData = JSON.parse(localStorage.getItem('favoriteTracksData') || '[]'); // Store track data for favorites
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        let sleepTimer = null;
+        let sleepTimerSeconds = 0;
+        let currentTrack = null; // Store current track data
+        let lastPlaylistData = null; // Store last fetched playlist data
+        let lastPlayerTab = 'now-playing'; // Store last active player tab
+        let currentPlaylistSource = null; // Track where the current playlist came from
+        let playbackHistory = JSON.parse(localStorage.getItem('playbackHistory') || '[]');
+        let playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
+        let queue = []; // Advanced queue management
+        let crossfadeDuration = 0; // Crossfade duration in seconds
+        let gaplessPlayback = false; // Gapless playback setting
+        let contextMenuTrack = null; // Track for context menu operations
+        let isCrossfading = false; // Flag to track crossfading state
+
+        // --- DOM Element Helpers ---
+        const G = id => document.getElementById(id);
+        const audio = G('audio-element');
+
+        // --- Utility Functions ---
+        const showToast = (message, duration = 3000) => {
+            const toast = G('toast');
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.pointerEvents = 'auto';
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.pointerEvents = 'none';
+            }, duration);
+        };
+
+        const formatTime = s => isNaN(s) ? '0:00' : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+        const updateSearchHistory = (url) => {
+            if (!url) return;
+
+            // Remove if already exists
+            searchHistory = searchHistory.filter(item => item !== url);
+
+            // Add to beginning
+            searchHistory.unshift(url);
+
+            // Keep only last 5
+            if (searchHistory.length > 5) {
+                searchHistory = searchHistory.slice(0, 5);
             }
-            const data = await response.json();
-            lastPlaylistData = data; // Store the playlist data
-            renderPlaylist(data);
-            updateSearchHistory(scUrl);
-        } catch (err) {
-            G('error-message').textContent = err.message;
-            errorDisplay.classList.remove('hidden');
-        } finally {
-            loader.classList.add('hidden');
-            fetchBtn.disabled = false;
-        }
-    }
-    
-    // --- UI Rendering ---
-    function renderPlaylist(data) {
-        const playlistContainer = G('playlist-container');
-        const playlistHeader = G('playlist-header');
-        
-        const isSingleTrack = data.type === 'track';
-        const tracks = isSingleTrack ? [data.track] : data.tracks;
-        const title = isSingleTrack ? 'Fetched Track' : data.title;
-        
-        playlistHeader.innerHTML = `
-            <h2 class="text-xl font-bold">${title}</h2>
-            <p class="text-sm" style="color: var(--hint-color);">${tracks.length} tracks</p>
+
+            // Save to localStorage
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+            // Update UI
+            renderSearchHistory();
+        };
+
+        const renderSearchHistory = () => {
+            const historyContainer = G('history-container');
+            const searchHistoryDiv = G('search-history');
+
+            if (searchHistory.length === 0) {
+                searchHistoryDiv.classList.add('hidden');
+                return;
+            }
+
+            searchHistoryDiv.classList.remove('hidden');
+            historyContainer.innerHTML = '';
+
+            searchHistory.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'history-item px-3 py-1 rounded-lg text-sm cursor-pointer';
+                item.style.backgroundColor = 'var(--secondary-bg-color)';
+                item.textContent = url.length > 30 ? url.substring(0, 30) + '...' : url;
+                item.addEventListener('click', () => {
+                    G('sc-url-input').value = url;
+                    handleFetch();
+                });
+                historyContainer.appendChild(item);
+            });
+        };
+
+        // --- Playback History Management ---
+        const addToPlaybackHistory = (track) => {
+            // Remove if already exists
+            playbackHistory = playbackHistory.filter(item => item.track_url !== track.track_url);
+
+            // Add to beginning
+            playbackHistory.unshift({
+                ...track,
+                playedAt: new Date().toISOString()
+            });
+
+            // Keep only last 50
+            if (playbackHistory.length > 50) {
+                playbackHistory = playbackHistory.slice(0, 50);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('playbackHistory', JSON.stringify(playbackHistory));
+
+            // Update UI if history tab is visible
+            if (!G('history-tab').classList.contains('hidden')) {
+                renderPlaybackHistory();
+            }
+        };
+
+        const renderPlaybackHistory = () => {
+            const container = G('history-tracks-container');
+            container.innerHTML = '';
+
+            if (playbackHistory.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <p>No playback history yet</p>
+                <p class="text-sm mt-2">Your recently played tracks will appear here</p>
+            </div>
         `;
-        playlistHeader.classList.remove('hidden');
-        
-        tracks.forEach((track, index) => {
-            const isFavorite = favoriteTracks.includes(track.track_url);
-            const el = document.createElement('div');
-            el.className = 'track-item p-3 rounded-lg flex items-center gap-4';
-            el.innerHTML = `
-                <div class="flex-shrink-0 relative">
-                    <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                    <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
+                return;
+            }
+
+            playbackHistory.forEach((track, index) => {
+                const isFavorite = favoriteTracks.includes(track.track_url);
+                const el = document.createElement('div');
+                el.className = 'history-track-item p-3 rounded-lg flex items-center gap-4';
+                el.innerHTML = `
+            <div class="flex-shrink-0 relative">
+                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
+                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="flex-grow min-w-0">
+                <p class="font-semibold truncate">${track.title}</p>
+                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+                <p class="text-xs" style="color: var(--hint-color);">${formatPlayedDate(track.playedAt)}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+                <button class="favorite-btn-history p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
+                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        `;
+
+                // Store track data in dataset
+                el.dataset.trackUrl = track.track_url;
+                el.dataset.trackTitle = track.title;
+                el.dataset.trackPerformer = track.performer;
+                el.dataset.trackThumb = track.thumb || '';
+                el.dataset.trackDuration = track.duration || '';
+
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.favorite-btn-history') || e.target.closest('.download-btn')) return;
+
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+
+                    // Create a temporary playlist with just this track
+                    currentPlaylist = [trackData];
+                    originalPlaylist = [trackData];
+                    currentPlaylistSource = 'history';
+                    playTrack(0);
+                });
+
+                el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    showAddToPlaylistModal(trackData);
+                });
+
+                el.querySelector('.favorite-btn-history').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    toggleFavorite(trackData);
+                });
+
+                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
+
+                container.appendChild(el);
+            });
+        };
+
+        const formatPlayedDate = (dateString) => {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+
+            return date.toLocaleDateString();
+        };
+
+        const clearPlaybackHistory = () => {
+            playbackHistory = [];
+            localStorage.setItem('playbackHistory', JSON.stringify(playbackHistory));
+            renderPlaybackHistory();
+            showToast("Playback history cleared");
+        };
+
+        // --- Playlist Management ---
+        const createPlaylist = (name, description = '') => {
+            const newPlaylist = {
+                id: Date.now().toString(),
+                name,
+                description,
+                tracks: [],
+                createdAt: new Date().toISOString()
+            };
+
+            playlists.push(newPlaylist);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            // Update UI if playlists tab is visible
+            if (!G('playlists-tab').classList.contains('hidden')) {
+                renderPlaylists();
+            }
+
+            return newPlaylist;
+        };
+
+        const addTrackToPlaylist = (playlistId, track) => {
+            const playlist = playlists.find(p => p.id === playlistId);
+            if (!playlist) return false;
+
+            // Check if track already exists in playlist
+            if (playlist.tracks.some(t => t.track_url === track.track_url)) {
+                showToast("Track already in playlist");
+                return false;
+            }
+
+            playlist.tracks.push(track);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            // Update UI if playlists tab is visible
+            if (!G('playlists-tab').classList.contains('hidden')) {
+                renderPlaylists();
+            }
+
+            showToast(`Added to ${playlist.name}`);
+            return true;
+        };
+
+        const removeTrackFromPlaylist = (playlistId, trackIndex) => {
+            const playlist = playlists.find(p => p.id === playlistId);
+            if (!playlist || trackIndex < 0 || trackIndex >= playlist.tracks.length) return false;
+
+            playlist.tracks.splice(trackIndex, 1);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            // Update UI if playlists tab is visible
+            if (!G('playlists-tab').classList.contains('hidden')) {
+                renderPlaylists();
+            }
+
+            return true;
+        };
+
+        const deletePlaylist = (playlistId) => {
+            playlists = playlists.filter(p => p.id !== playlistId);
+            localStorage.setItem('playlists', JSON.stringify(playlists));
+
+            // Update UI if playlists tab is visible
+            if (!G('playlists-tab').classList.contains('hidden')) {
+                renderPlaylists();
+            }
+
+            showToast("Playlist deleted");
+        };
+
+        const renderPlaylists = () => {
+            const container = G('playlists-container');
+            container.innerHTML = '';
+
+            if (playlists.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-list"></i>
+                <p>No playlists yet</p>
+                <p class="text-sm mt-2">Create a new playlist to organize your favorite tracks</p>
+            </div>
+        `;
+                return;
+            }
+
+            playlists.forEach(playlist => {
+                const el = document.createElement('div');
+                el.className = 'playlist-item';
+                el.innerHTML = `
+            <div class="playlist-header">
+                <div class="playlist-title">${playlist.name}</div>
+                <div class="playlist-actions">
+                    <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Play" data-playlist-id="${playlist.id}">
                         <i class="fas fa-play"></i>
-                    </div>
-                </div>
-                <div class="flex-grow min-w-0">
-                    <p class="font-semibold truncate">${track.title}</p>
-                    <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button class="favorite-btn-track p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
-                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                     </button>
-                    <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                    <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
-                        <i class="fas fa-download"></i>
-                    </a>
-                </div>
-            `;
-            
-            el.addEventListener('click', (e) => {
-                if (e.target.closest('.favorite-btn-track') || e.target.closest('.download-btn')) return;
-                
-                originalPlaylist = [...tracks];
-                currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
-                const newIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-                currentPlaylistSource = 'search';
-                playTrack(newIndex);
-            });
-            
-            el.querySelector('.favorite-btn-track').addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleFavorite(track);
-            });
-            
-            el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-            
-            playlistContainer.appendChild(el);
-        });
-    }
-    
-    function renderPlaylistTab() {
-        const container = G('playlist-tracks-container');
-        container.innerHTML = '';
-        
-        currentPlaylist.forEach((track, index) => {
-            const isFavorite = favoriteTracks.includes(track.track_url);
-            const el = document.createElement('div');
-            el.className = 'playlist-track-item p-2 rounded-lg flex items-center gap-3';
-            el.innerHTML = `
-                <img src="${track.thumb || ''}" class="w-10 h-10 rounded-md flex-shrink-0 bg-gray-700">
-                <div class="flex-grow min-w-0">
-                    <p class="font-medium truncate">${track.title}</p>
-                    <p class="text-xs truncate" style="color: var(--hint-color);">${track.performer}</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button class="favorite-btn-playlist p-1 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
-                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart text-sm"></i>
+                    <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Delete" data-playlist-id="${playlist.id}">
+                        <i class="fas fa-trash"></i>
                     </button>
-                    <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
                 </div>
-            `;
-            
-            el.addEventListener('click', () => playTrack(index));
-            
-            el.querySelector('.favorite-btn-playlist').addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleFavorite(track);
+            </div>
+            <div class="playlist-track-count">${playlist.tracks.length} tracks</div>
+            ${playlist.description ? `<p class="text-sm" style="color: var(--hint-color);">${playlist.description}</p>` : ''}
+        `;
+
+                // Store playlist data in dataset
+                el.dataset.playlistId = playlist.id;
+                el.dataset.playlistName = playlist.name;
+                el.dataset.playlistDescription = playlist.description || '';
+
+                // Play button
+                el.querySelector('[data-tooltip="Play"]').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const playlistId = e.currentTarget.dataset.playlistId;
+                    playPlaylist(playlistId);
+                });
+
+                // Delete button
+                el.querySelector('[data-tooltip="Delete"]').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const playlistId = e.currentTarget.dataset.playlistId;
+                    const playlistName = e.currentTarget.closest('.playlist-item').dataset.playlistName;
+                    if (confirm(`Are you sure you want to delete "${playlistName}"?`)) {
+                        deletePlaylist(playlistId);
+                    }
+                });
+
+                // Click on playlist item to view tracks
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+                    const playlistId = e.currentTarget.dataset.playlistId;
+                    viewPlaylist(playlistId);
+                });
+
+                container.appendChild(el);
             });
-            
-            container.appendChild(el);
-        });
-        
-        highlightActiveTrack();
-    }
-    
-    function renderFavoritesTab() {
-        const container = G('favorites-container');
-        container.innerHTML = '';
-        
-        if (favoriteTracksData.length === 0) {
+        };
+
+        const playPlaylist = (playlistId) => {
+            const playlist = playlists.find(p => p.id === playlistId);
+            if (!playlist || playlist.tracks.length === 0) {
+                showToast("Playlist is empty");
+                return;
+            }
+
+            originalPlaylist = [...playlist.tracks];
+            currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+            currentPlaylistSource = 'playlist';
+            currentTrackIndex = 0;
+
+            playTrack(0);
+            showToast(`Playing ${playlist.name}`);
+        };
+
+        const viewPlaylist = (playlistId) => {
+            const playlist = playlists.find(p => p.id === playlistId);
+            if (!playlist) return;
+
+            const container = G('playlists-container');
             container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-heart"></i>
-                    <p>No favorites yet</p>
-                    <p class="text-sm mt-2">Click the heart icon on any track to add it to your favorites</p>
-                </div>
-            `;
-            return;
-        }
-        
-        // Add "Play All" button
-        const playAllBtn = document.createElement('div');
-        playAllBtn.className = 'play-all-btn flex items-center justify-center gap-2';
-        playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Favorites';
-        playAllBtn.addEventListener('click', playAllFavorites);
-        container.appendChild(playAllBtn);
-        
-        favoriteTracksData.forEach((track, index) => {
-            const el = document.createElement('div');
-            el.className = 'favorite-track-item p-3 rounded-lg flex items-center gap-4';
-            el.innerHTML = `
-                <div class="flex-shrink-0 relative">
-                    <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                    <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
-                        <i class="fas fa-play"></i>
-                    </div>
-                </div>
-                <div class="flex-grow min-w-0">
-                    <p class="font-semibold truncate">${track.title}</p>
-                    <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button class="remove-favorite-btn p-2 text-red-500 hover:text-red-400" data-index="${index}">
-                        <i class="fas fa-heart-broken"></i>
-                    </button>
-                    <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                    <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
-                        <i class="fas fa-download"></i>
-                    </a>
-                </div>
-            `;
-            
-            el.addEventListener('click', (e) => {
-                if (e.target.closest('.remove-favorite-btn') || e.target.closest('.download-btn') || e.target.closest('.play-all-btn')) return;
-                
-                // Play all favorites starting from the selected track
-                playFavoritesFromIndex(index);
+        <div class="flex items-center mb-4">
+            <button id="back-to-playlists" class="p-2 text-gray-400 hover:text-white">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2 class="text-lg font-semibold ml-2">${playlist.name}</h2>
+        </div>
+        <div class="mb-4">
+            ${playlist.description ? `<p class="text-sm" style="color: var(--hint-color);">${playlist.description}</p>` : ''}
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <button class="btn-primary flex items-center gap-2" id="play-playlist-btn" data-playlist-id="${playlist.id}">
+                <i class="fas fa-play"></i> Play All
+            </button>
+            <button class="btn-secondary flex items-center gap-2" id="shuffle-playlist-btn" data-playlist-id="${playlist.id}">
+                <i class="fas fa-random"></i> Shuffle
+            </button>
+        </div>
+        <div class="space-y-2" id="playlist-tracks-container"></div>
+    `;
+
+            // Back button
+            G('back-to-playlists').addEventListener('click', () => {
+                renderPlaylists();
             });
-            
-            el.querySelector('.remove-favorite-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                removeFavorite(index);
+
+            // Play button
+            G('play-playlist-btn').addEventListener('click', (e) => {
+                const playlistId = e.currentTarget.dataset.playlistId;
+                playPlaylist(playlistId);
             });
-            
-            el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-            
-            container.appendChild(el);
-        });
-    }
-    
-    // --- Fisher-Yates shuffle algorithm ---
-    function shuffleArray(array) {
-        const newArray = [...array];
-        for (let i = newArray.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+
+            // Shuffle button
+            G('shuffle-playlist-btn').addEventListener('click', (e) => {
+                const playlistId = e.currentTarget.dataset.playlistId;
+                const playlist = playlists.find(p => p.id === playlistId);
+                if (!playlist || playlist.tracks.length === 0) return;
+
+                originalPlaylist = [...playlist.tracks];
+                currentPlaylist = shuffleArray([...originalPlaylist]);
+                currentPlaylistSource = 'playlist';
+                currentTrackIndex = 0;
+
+                playTrack(0);
+                showToast(`Shuffling ${playlist.name}`);
+            });
+
+            // Render tracks
+            const tracksContainer = G('playlist-tracks-container');
+            playlist.tracks.forEach((track, index) => {
+                const isFavorite = favoriteTracks.includes(track.track_url);
+                const el = document.createElement('div');
+                el.className = 'track-item p-3 rounded-lg flex items-center gap-4';
+                el.innerHTML = `
+            <div class="flex-shrink-0 relative">
+                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
+                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="flex-grow min-w-0">
+                <p class="font-semibold truncate">${track.title}</p>
+                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+                <button class="remove-from-playlist-btn p-2 text-gray-400 hover:text-red-500" data-playlist-id="${playlist.id}" data-index="${index}">
+                    <i class="fas fa-times"></i>
+                </button>
+                <button class="favorite-btn-playlist-track p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
+                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        `;
+
+                // Store track data in dataset
+                el.dataset.trackUrl = track.track_url;
+                el.dataset.trackTitle = track.title;
+                el.dataset.trackPerformer = track.performer;
+                el.dataset.trackThumb = track.thumb || '';
+                el.dataset.trackDuration = track.duration || '';
+                el.dataset.playlistId = playlist.id;
+                el.dataset.trackIndex = index;
+
+                // Play track
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+
+                    originalPlaylist = [...playlist.tracks];
+                    currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+                    const newIndex = currentPlaylist.findIndex(t => t.track_url === trackData.track_url);
+                    currentPlaylistSource = 'playlist';
+                    playTrack(newIndex);
+                });
+
+                // Add to playlist button
+                el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    showAddToPlaylistModal(trackData);
+                });
+
+                // Remove from playlist button
+                el.querySelector('.remove-from-playlist-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const playlistId = e.currentTarget.dataset.playlistId;
+                    const index = parseInt(e.currentTarget.dataset.index);
+                    removeTrackFromPlaylist(playlistId, index);
+                    viewPlaylist(playlistId); // Refresh the view
+                });
+
+                // Favorite button
+                el.querySelector('.favorite-btn-playlist-track').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    toggleFavorite(trackData);
+                });
+
+                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
+
+                tracksContainer.appendChild(el);
+            });
+        };
+
+        // --- Queue Management ---
+        const addToQueue = (track, position = 'end') => {
+            if (position === 'next') {
+                // Insert after current track
+                queue.splice(currentTrackIndex + 1, 0, track);
+            } else {
+                // Add to end of queue
+                queue.push(track);
+            }
+
+            // Update current playlist to match the new queue
+            currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1).concat(queue);
+            originalPlaylist = [...currentPlaylist];
+
+            // Update player's queue display
+            renderPlayerQueue();
+            showToast(`Added to queue ${position === 'next' ? 'next' : ''}`);
+        };
+
+        const removeFromQueue = (index) => {
+            if (index < 0 || index >= queue.length) return false;
+
+            // Remove from queue
+            queue.splice(index, 1);
+
+            // Update current playlist if it's the queue source
+            if (currentPlaylistSource === 'queue') {
+                const playlistIndex = index + currentTrackIndex + 1;
+                currentPlaylist.splice(playlistIndex, 1);
+                originalPlaylist = [...currentPlaylist];
+            }
+
+            // Update player's queue display
+            renderPlayerQueue();
+            showToast("Removed from queue");
+            return true;
+        };
+
+        const clearQueue = () => {
+            queue = [];
+
+            // Update current playlist to only include tracks up to the current one
+            currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1);
+            originalPlaylist = [...currentPlaylist];
+
+            // Update player's queue display
+            renderPlayerQueue();
+            showToast("Queue cleared");
+        };
+
+        function renderPlayerQueue() {
+            const container = G('player-queue-container');
+
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            // Add queue management buttons
+            const queueControls = document.createElement('div');
+            queueControls.className = 'flex justify-between items-center mb-4';
+            queueControls.innerHTML = `
+        <h3 class="text-lg font-semibold">Queue</h3>
+        <button id="player-clear-queue" class="text-sm" style="color: var(--hint-color);">Clear Queue</button>
+    `;
+            container.appendChild(queueControls);
+
+            // Add clear queue button event listener
+            const clearButton = queueControls.querySelector('#player-clear-queue');
+            clearButton.addEventListener('click', () => {
+                if (confirm("Are you sure you want to clear the queue?")) {
+                    clearQueue();
+                }
+            });
+
+            // Show currently playing track if available
+            if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
+                const currentTrack = currentPlaylist[currentTrackIndex];
+                const currentTrackEl = document.createElement('div');
+                currentTrackEl.className = 'queue-item bg-purple-900/30 border border-purple-500/30';
+                currentTrackEl.innerHTML = `
+            <div class="queue-item-handle">
+                <i class="fas fa-music text-purple-400"></i>
+            </div>
+            <div class="queue-item-info">
+                <div class="queue-item-title text-purple-300">${currentTrack.title}</div>
+                <div class="queue-item-artist text-purple-400">${currentTrack.performer}</div>
+            </div>
+            <div class="queue-item-duration text-purple-400">${currentTrack.duration ? formatTime(currentTrack.duration) : ''}</div>
+            <div class="queue-item-actions">
+                <span class="text-xs text-purple-400 font-medium">NOW PLAYING</span>
+            </div>
+        `;
+                container.appendChild(currentTrackEl);
+            }
+
+            // Show upcoming tracks from the queue
+            if (queue.length === 0) {
+                container.innerHTML += `
+            <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p>No more tracks in queue</p>
+                <p class="text-sm mt-2">Add tracks to the queue to see them here</p>
+            </div>
+        `;
+                return;
+            }
+
+            const tracksContainer = document.createElement('div');
+            tracksContainer.className = 'space-y-2';
+
+            queue.forEach((track, index) => {
+                const isFavorite = favoriteTracks.includes(track.track_url);
+                const el = document.createElement('div');
+                el.className = 'queue-item';
+                el.draggable = true;
+                el.dataset.index = index;
+                el.innerHTML = `
+    <div class="queue-item-handle">
+        <i class="fas fa-grip-vertical"></i>
+    </div>
+    <div class="queue-item-info">
+        <div class="queue-item-title">${track.title}</div>
+        <div class="queue-item-artist">${track.performer}</div>
+    </div>
+    <div class="queue-item-duration">${track.duration ? formatTime(track.duration) : ''}</div>
+    <div class="queue-item-actions">
+        <button class="p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
+            <i class="fas fa-plus-circle"></i>
+        </button>
+        <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Remove" data-index="${index}">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+`;
+
+                // Remove button
+                el.querySelector('[data-tooltip="Remove"]').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFromQueue(index);
+                });
+
+                // Drag and drop
+                el.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', index);
+                    el.classList.add('dragging');
+                });
+
+                el.querySelector('[data-tooltip="Add to Playlist"]').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showAddToPlaylistModal(track);
+                });
+
+                el.addEventListener('dragend', () => {
+                    el.classList.remove('dragging');
+                });
+
+                el.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                });
+
+                el.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIndex = parseInt(el.dataset.index);
+
+                    if (fromIndex !== toIndex) {
+                        // Reorder the queue
+                        const movedTrack = queue.splice(fromIndex, 1)[0];
+                        queue.splice(toIndex, 0, movedTrack);
+
+                        // Update current playlist to match the new queue order
+                        currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1).concat(queue);
+                        originalPlaylist = [...currentPlaylist];
+
+                        renderPlayerQueue();
+                    }
+                });
+
+                tracksContainer.appendChild(el);
+            });
+
+            container.appendChild(tracksContainer);
         }
-        return newArray;
-    }
-    
-    // --- Player Core Logic ---
-    const playTrack = (index) => {
-        if (index < 0 || index >= currentPlaylist.length) return;
-        
-        currentTrackIndex = index;
-        const track = currentPlaylist[index];
-        currentTrack = track; // Store current track
-        
-        // Show loading indicator
-        G('player-loading-indicator').classList.remove('hidden');
-        G('player-loading-indicator-expanded').classList.remove('hidden');
-        
-        audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
-        audio.load();
-        
-        // Update favorite button state
-        updateFavoriteButton(track.track_url);
-        
-        // Update player UI immediately
-        updatePlayerUI(track);
-        
-        audio.play().catch(e => {
-            console.error("Autoplay was prevented:", e);
-            showToast("Playback was prevented. Please interact with the player first.");
-        });
-        
-        // Show player
-        G('persistent-player-container').classList.add('show');
-        highlightActiveTrack();
-        renderPlaylistTab();
-    };
-    
-    const playAllFavorites = () => {
-        if (favoriteTracksData.length === 0) {
-            showToast("No favorites to play");
-            return;
+
+        // --- Crossfade and Gapless Playback ---
+        const setupCrossfade = () => {
+            if (crossfadeDuration <= 0 || gaplessPlayback) {
+                // No crossfade needed
+                return;
+            }
+
+            // Create a new audio element for crossfading
+            const nextAudio = new Audio();
+            nextAudio.volume = 0;
+
+            // Set up event listeners for crossfading
+            nextAudio.addEventListener('canplay', () => {
+                if (isCrossfading) {
+                    // Start crossfading
+                    const fadeInterval = setInterval(() => {
+                        if (nextAudio.volume < 1) {
+                            nextAudio.volume += 0.05;
+                            audio.volume -= 0.05;
+                        } else {
+                            clearInterval(fadeInterval);
+                            // Switch to the new audio element
+                            audio.pause();
+                            audio.src = '';
+                            audio = nextAudio;
+                            isCrossfading = false;
+                        }
+                    }, crossfadeDuration * 50); // Adjust interval based on crossfade duration
+                }
+            });
+
+            return nextAudio;
+        };
+
+        // --- Context Menu ---
+        const showContextMenu = (e, track) => {
+            e.preventDefault();
+            contextMenuTrack = track;
+
+            const contextMenu = G('context-menu');
+            contextMenu.classList.remove('hidden');
+
+            // Position the context menu
+            contextMenu.style.left = `${e.clientX}px`;
+            contextMenu.style.top = `${e.clientY}px`;
+
+            // Update favorite button text
+            const isFavorite = favoriteTracks.includes(track.track_url);
+            const favoriteBtn = G('ctx-toggle-favorite');
+            favoriteBtn.innerHTML = isFavorite ?
+                '<i class="fas fa-heart"></i> Remove from Favorites' :
+                '<i class="far fa-heart"></i> Add to Favorites';
+
+            // Hide context menu when clicking outside
+            document.addEventListener('click', hideContextMenu, { once: true });
+        };
+
+        const hideContextMenu = () => {
+            G('context-menu').classList.add('hidden');
+        };
+
+        // --- API Fetch Logic ---
+        async function handleFetch() {
+            const urlInput = G('sc-url-input');
+            const fetchBtn = G('fetch-btn');
+            const loader = G('loader');
+            const errorDisplay = G('error-display');
+            const playlistContainer = G('playlist-container');
+            const playlistHeader = G('playlist-header');
+
+            const scUrl = urlInput.value.trim();
+            if (!scUrl) return;
+
+            loader.classList.remove('hidden');
+            errorDisplay.classList.add('hidden');
+            playlistContainer.innerHTML = '';
+            playlistHeader.classList.add('hidden');
+            fetchBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/fetch-info?url=${encodeURIComponent(scUrl)}`);
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || `Request failed with status ${response.status}`);
+                }
+                const data = await response.json();
+                lastPlaylistData = data; // Store the playlist data
+                renderPlaylist(data);
+                updateSearchHistory(scUrl);
+            } catch (err) {
+                G('error-message').textContent = err.message;
+                errorDisplay.classList.remove('hidden');
+            } finally {
+                loader.classList.add('hidden');
+                fetchBtn.disabled = false;
+            }
         }
-        
-        // Set playlist to all favorites
-        originalPlaylist = [...favoriteTracksData];
-        currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
-        currentPlaylistSource = 'favorites';
-        currentTrackIndex = 0;
-        
-        // Play the first track
-        playTrack(0);
-        showToast("Playing all favorites");
-    };
-    
-    const playFavoritesFromIndex = (index) => {
-        if (favoriteTracksData.length === 0 || index < 0 || index >= favoriteTracksData.length) {
-            return;
+
+        // --- UI Rendering ---
+        function renderPlaylist(data) {
+            const playlistContainer = G('playlist-container');
+            const playlistHeader = G('playlist-header');
+
+            const isSingleTrack = data.type === 'track';
+            const tracks = isSingleTrack ? [data.track] : data.tracks;
+            const title = isSingleTrack ? 'Fetched Track' : data.title;
+
+            playlistHeader.innerHTML = `
+        <h2 class="text-xl font-bold">${title}</h2>
+        <p class="text-sm" style="color: var(--hint-color);">${tracks.length} tracks</p>
+    `;
+            playlistHeader.classList.remove('hidden');
+
+            tracks.forEach((track, index) => {
+                const isFavorite = favoriteTracks.includes(track.track_url);
+                const el = document.createElement('div');
+                el.className = 'track-item p-3 rounded-lg flex items-center gap-4';
+                el.innerHTML = `
+            <div class="flex-shrink-0 relative">
+                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
+                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="flex-grow min-w-0">
+                <p class="font-semibold truncate">${track.title}</p>
+                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="favorite-btn-track p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
+                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        `;
+
+                // Context menu
+                el.addEventListener('contextmenu', (e) => {
+                    showContextMenu(e, track);
+                });
+
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.favorite-btn-track') || e.target.closest('.download-btn')) return;
+
+                    // Set current playlist to the fetched tracks in order
+                    originalPlaylist = [...tracks];
+                    currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+                    currentPlaylistSource = 'search';
+
+                    // Find the selected track in the (potentially shuffled) playlist
+                    const newIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+                    playTrack(newIndex);
+                });
+
+                el.querySelector('.favorite-btn-track').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(track);
+                });
+
+                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
+
+                playlistContainer.appendChild(el);
+            });
         }
-        
-        // Set playlist to all favorites
-        originalPlaylist = [...favoriteTracksData];
-        currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
-        currentPlaylistSource = 'favorites';
-        
-        // Find the selected track in the (potentially shuffled) playlist
-        const selectedTrack = favoriteTracksData[index];
-        currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === selectedTrack.track_url);
-        
-        // Play the selected track
-        playTrack(currentTrackIndex);
-    };
-    
-    const playNext = () => {
-        if (repeatMode === 'one' && !isDraggingProgress) {
-            audio.currentTime = 0;
-            audio.play();
-            return;
+
+        function renderPlaylistTab() {
+            const container = G('playlist-tracks-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            currentPlaylist.forEach((track, index) => {
+                const isFavorite = favoriteTracks.includes(track.track_url);
+                const el = document.createElement('div');
+                el.className = 'playlist-track-item p-2 rounded-lg flex items-center gap-3';
+                el.innerHTML = `
+            <img src="${track.thumb || ''}" class="w-10 h-10 rounded-md flex-shrink-0 bg-gray-700">
+            <div class="flex-grow min-w-0">
+                <p class="font-medium truncate">${track.title}</p>
+                <p class="text-xs truncate" style="color: var(--hint-color);">${track.performer}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="favorite-btn-playlist p-1 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart text-sm"></i>
+                </button>
+                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
+            </div>
+        `;
+
+                // Store track data in dataset
+                el.dataset.trackUrl = track.track_url;
+                el.dataset.trackTitle = track.title;
+                el.dataset.trackPerformer = track.performer;
+                el.dataset.trackThumb = track.thumb || '';
+                el.dataset.trackDuration = track.duration || '';
+
+                el.addEventListener('click', () => {
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    const newIndex = currentPlaylist.findIndex(t => t.track_url === trackData.track_url);
+                    playTrack(newIndex);
+                });
+
+                el.querySelector('.favorite-btn-playlist').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    toggleFavorite(trackData);
+                });
+
+                container.appendChild(el);
+            });
+
+            highlightActiveTrack();
         }
-        
-        let nextIndex;
-        if (isShuffle) {
-            // Get a random track that's not the current one
-            do {
-                nextIndex = Math.floor(Math.random() * currentPlaylist.length);
-            } while (nextIndex === currentTrackIndex && currentPlaylist.length > 1);
-        } else {
-            nextIndex = currentTrackIndex + 1;
+
+        function renderFavoritesTab() {
+            const container = G('favorites-container');
+            container.innerHTML = '';
+
+            if (favoriteTracksData.length === 0) {
+                container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-heart"></i>
+                <p>No favorites yet</p>
+                <p class="text-sm mt-2">Click the heart icon on any track to add it to your favorites</p>
+            </div>
+        `;
+                return;
+            }
+
+            // Add "Play All" button
+            const playAllBtn = document.createElement('div');
+            playAllBtn.className = 'play-all-btn flex items-center justify-center gap-2';
+            playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Favorites';
+            playAllBtn.addEventListener('click', playAllFavorites);
+            container.appendChild(playAllBtn);
+
+            favoriteTracksData.forEach((track, index) => {
+                const el = document.createElement('div');
+                el.className = 'favorite-track-item p-3 rounded-lg flex items-center gap-4';
+                el.innerHTML = `
+            <div class="flex-shrink-0 relative">
+                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
+                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="flex-grow min-w-0">
+                <p class="font-semibold truncate">${track.title}</p>
+                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
+                    <i class="fas fa-plus-circle"></i>
+                </button>
+                <button class="remove-favorite-btn p-2 text-red-500 hover:text-red-400" data-index="${index}">
+                    <i class="fas fa-heart-broken"></i>
+                </button>
+                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
+                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
+                    <i class="fas fa-download"></i>
+                </a>
+            </div>
+        `;
+
+                // Store track data in dataset
+                el.dataset.trackUrl = track.track_url;
+                el.dataset.trackTitle = track.title;
+                el.dataset.trackPerformer = track.performer;
+                el.dataset.trackThumb = track.thumb || '';
+                el.dataset.trackDuration = track.duration || '';
+
+                // Context menu
+                el.addEventListener('contextmenu', (e) => {
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    showContextMenu(e, trackData);
+                });
+
+                el.addEventListener('click', (e) => {
+                    if (e.target.closest('.remove-favorite-btn') || e.target.closest('.download-btn') || e.target.closest('.play-all-btn')) return;
+
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+
+                    // Play all favorites starting from the selected track
+                    playFavoritesFromIndex(index);
+                });
+
+                el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Get track data from dataset
+                    const trackData = {
+                        track_url: el.dataset.trackUrl,
+                        title: el.dataset.trackTitle,
+                        performer: el.dataset.trackPerformer,
+                        thumb: el.dataset.trackThumb,
+                        duration: parseFloat(el.dataset.trackDuration) || 0
+                    };
+                    showAddToPlaylistModal(trackData);
+                });
+
+                el.querySelector('.remove-favorite-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFavorite(index);
+                });
+
+                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
+
+                container.appendChild(el);
+            });
         }
-        
-        if (nextIndex >= currentPlaylist.length) {
-            if (repeatMode === 'all') {
-                nextIndex = 0;
+
+        // --- Fisher-Yates shuffle algorithm ---
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // --- Player Core Logic ---
+        const playTrack = (index) => {
+            if (index < 0 || index >= currentPlaylist.length) return;
+
+            currentTrackIndex = index;
+            const track = currentPlaylist[index];
+            currentTrack = track; // Store current track
+
+            // Add to playback history
+            addToPlaybackHistory(track);
+
+            // Show loading indicator
+            G('player-loading-indicator').classList.remove('hidden');
+            G('player-loading-indicator-expanded').classList.remove('hidden');
+
+            // Setup crossfade if needed
+            if (crossfadeDuration > 0 && !gaplessPlayback && !isCrossfading && currentTrackIndex < currentPlaylist.length - 1) {
+                const nextAudio = setupCrossfade();
+                const nextTrack = currentPlaylist[currentTrackIndex + 1];
+                nextAudio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(nextTrack.track_url)}`;
+                nextAudio.load();
+                isCrossfading = true;
+            }
+
+            audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+            audio.load();
+
+            // Update favorite button state
+            updateFavoriteButton(track.track_url);
+
+            // Update queue to match the current playlist order
+            queue = currentPlaylist.slice(currentTrackIndex + 1);
+
+            // Update player's queue display
+            renderPlayerQueue();
+
+            // Update player UI immediately
+            updatePlayerUI(track);
+
+            audio.play().catch(e => {
+                console.error("Autoplay was prevented:", e);
+                showToast("Playback was prevented. Please interact with the player first.");
+            });
+
+            // Show player
+            G('persistent-player-container').classList.add('show');
+            highlightActiveTrack();
+            renderPlaylistTab();
+        };
+
+        const playAllFavorites = () => {
+            if (favoriteTracksData.length === 0) {
+                showToast("No favorites to play");
+                return;
+            }
+
+            // Set playlist to all favorites
+            originalPlaylist = [...favoriteTracksData];
+            currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+            currentPlaylistSource = 'favorites';
+            currentTrackIndex = 0;
+
+            // Play the first track
+            playTrack(0);
+            showToast("Playing all favorites");
+        };
+
+        const playFavoritesFromIndex = (index) => {
+            if (favoriteTracksData.length === 0 || index < 0 || index >= favoriteTracksData.length) {
+                return;
+            }
+
+            // Set playlist to all favorites
+            originalPlaylist = [...favoriteTracksData];
+            currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+            currentPlaylistSource = 'favorites';
+
+            // Find the selected track in the (potentially shuffled) playlist
+            const selectedTrack = favoriteTracksData[index];
+            currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === selectedTrack.track_url);
+
+            // Play the selected track
+            playTrack(currentTrackIndex);
+        };
+
+        const playNext = () => {
+            // Check if there are tracks in the current playlist
+            if (currentTrackIndex + 1 < currentPlaylist.length) {
+                // Play next track in current playlist
+                playTrack(currentTrackIndex + 1);
+            } else if (repeatMode === 'one' && !isDraggingProgress) {
+                audio.currentTime = 0;
+                audio.play();
+            } else if (repeatMode === 'all') {
+                // Start from beginning of current playlist
+                playTrack(0);
             } else {
                 audio.pause();
                 showToast("End of playlist");
+            }
+        };
+
+        const playPrev = () => {
+            if (audio.currentTime > 3) {
+                audio.currentTime = 0;
+            } else {
+                let prevIndex;
+                if (isShuffle) {
+                    // Get a random track that's not the current one
+                    do {
+                        prevIndex = Math.floor(Math.random() * currentPlaylist.length);
+                    } while (prevIndex === currentTrackIndex && currentPlaylist.length > 1);
+                } else {
+                    prevIndex = currentTrackIndex - 1;
+                }
+
+                if (prevIndex < 0) {
+                    if (repeatMode === 'all') {
+                        prevIndex = currentPlaylist.length - 1;
+                    } else {
+                        return; // Don't go to negative index
+                    }
+                }
+
+                playTrack(prevIndex);
+            }
+        };
+
+        // --- Player UI Updates ---
+        function updatePlayerUI(track) {
+            const thumb = track.thumb || '';
+            [G('player-thumb-mini'), G('player-thumb-expanded')].forEach(el => {
+                if (el) el.src = thumb;
+            });
+
+            if (G('player-title-mini')) G('player-title-mini').textContent = track.title;
+            if (G('player-title-expanded')) G('player-title-expanded').textContent = track.title;
+            if (G('player-performer-mini')) G('player-performer-mini').textContent = track.performer;
+            if (G('player-performer-expanded')) G('player-performer-expanded').textContent = track.performer;
+        }
+
+        function setPlayPauseIcons(paused) {
+            const iconClass = paused ? 'fa-play' : 'fa-pause';
+            if (G('player-play-pause-btn-mini')) {
+                G('player-play-pause-btn-mini').innerHTML = `<i class="fas ${iconClass}"></i>`;
+            }
+            if (G('player-play-pause-btn-expanded')) {
+                G('player-play-pause-btn-expanded').innerHTML = `<i class="fas ${iconClass}"></i>`;
+            }
+        }
+
+        function highlightActiveTrack() {
+            // Highlight in main list
+            document.querySelectorAll('#playlist-container .track-item').forEach(el => el.classList.remove('active'));
+
+            // Highlight in "Up Next" list
+            document.querySelectorAll('#playlist-tracks-container .playlist-track-item').forEach(el => el.classList.remove('active'));
+
+            // Highlight in favorites list
+            document.querySelectorAll('#favorites-container .favorite-track-item').forEach(el => el.classList.remove('active'));
+
+            // Highlight in history list
+            document.querySelectorAll('#history-tracks-container .history-track-item').forEach(el => el.classList.remove('active'));
+
+            if (currentTrackIndex > -1 && currentPlaylist[currentTrackIndex]) {
+                const activeTrackUrl = currentPlaylist[currentTrackIndex].track_url;
+
+                // Find and highlight in main playlist
+                const mainListItems = document.querySelectorAll('#playlist-container .track-item');
+                mainListItems.forEach(item => {
+                    const downloadBtn = item.querySelector('.download-btn');
+                    if (downloadBtn && downloadBtn.href.includes(activeTrackUrl)) {
+                        item.classList.add('active');
+                    }
+                });
+
+                // Highlight in playlist tab
+                const playlistListItem = document.querySelector(`#playlist-tracks-container .playlist-track-item:nth-child(${currentTrackIndex + 1})`);
+                playlistListItem?.classList.add('active');
+
+                // Highlight in favorites tab if it's a favorite
+                const favoriteIndex = favoriteTracksData.findIndex(t => t.track_url === activeTrackUrl);
+                if (favoriteIndex !== -1) {
+                    const favoriteListItem = document.querySelector(`#favorites-container .favorite-track-item:nth-child(${favoriteIndex + 2})`); // +2 because of the "Play All" button
+                    favoriteListItem?.classList.add('active');
+                }
+
+                // Highlight in history tab if it's in history
+                const historyIndex = playbackHistory.findIndex(t => t.track_url === activeTrackUrl);
+                if (historyIndex !== -1) {
+                    const historyListItem = document.querySelector(`#history-tracks-container .history-track-item:nth-child(${historyIndex + 1})`);
+                    historyListItem?.classList.add('active');
+                }
+            }
+        }
+
+        // --- Favorite Tracks Management ---
+        function toggleFavorite(track) {
+            const index = favoriteTracks.indexOf(track.track_url);
+            const data_index = favoriteTracksData.findIndex(t => t.track_url === track.track_url);
+
+            if (index > -1) {
+                // Remove from favorites
+                favoriteTracks.splice(index, 1);
+                if (data_index > -1) {
+                    favoriteTracksData.splice(data_index, 1);
+                }
+                showToast("Removed from favorites");
+            } else {
+                // Add to favorites
+                favoriteTracks.push(track.track_url);
+                favoriteTracksData.push(track);
+                showToast("Added to favorites");
+            }
+
+            // Save to localStorage
+            localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
+            localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
+
+            updateFavoriteButton(track.track_url);
+
+            // Update all favorite buttons in the main playlist
+            document.querySelectorAll('.favorite-btn-track').forEach(btn => {
+                const url = btn.getAttribute('data-url');
+                const isFav = favoriteTracks.includes(url);
+                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
+                btn.classList.toggle('text-red-500', isFav);
+            });
+
+            // Update all favorite buttons in the playlist tab
+            document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
+                const url = btn.getAttribute('data-url');
+                const isFav = favoriteTracks.includes(url);
+                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
+                btn.classList.toggle('text-red-500', isFav);
+            });
+
+            // Update favorites tab if it's currently visible
+            if (!G('favorites-tab').classList.contains('hidden')) {
+                renderFavoritesTab();
+            }
+
+            // If current playlist is from favorites and we removed a track, update the playlist
+            if (currentPlaylistSource === 'favorites' && index > -1) {
+                // Find the track in the current playlist and remove it
+                const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+                if (playlistIndex !== -1) {
+                    currentPlaylist.splice(playlistIndex, 1);
+                    originalPlaylist.splice(playlistIndex, 1);
+
+                    // Adjust current track index if needed
+                    if (currentTrackIndex > playlistIndex) {
+                        currentTrackIndex--;
+                    } else if (currentTrackIndex === playlistIndex) {
+                        // If we removed the currently playing track, stop playback
+                        if (currentTrackIndex >= currentPlaylist.length) {
+                            currentTrackIndex = currentPlaylist.length - 1;
+                        }
+                        if (currentTrackIndex >= 0) {
+                            playTrack(currentTrackIndex);
+                        } else {
+                            audio.pause();
+                            currentTrack = null;
+                        }
+                    }
+
+                    renderPlaylistTab();
+                }
+            }
+        }
+
+        function removeFavorite(index) {
+            const track = favoriteTracksData[index];
+            if (!track) return;
+
+            // Remove from arrays
+            favoriteTracksData.splice(index, 1);
+            const urlIndex = favoriteTracks.indexOf(track.track_url);
+            if (urlIndex > -1) {
+                favoriteTracks.splice(urlIndex, 1);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
+            localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
+
+            // Update UI
+            updateFavoriteButton(track.track_url);
+            renderFavoritesTab();
+            showToast("Removed from favorites");
+
+            // Update all favorite buttons in the main playlist
+            document.querySelectorAll('.favorite-btn-track').forEach(btn => {
+                const url = btn.getAttribute('data-url');
+                const isFav = favoriteTracks.includes(url);
+                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
+                btn.classList.toggle('text-red-500', isFav);
+            });
+
+            // Update all favorite buttons in the playlist tab
+            document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
+                const url = btn.getAttribute('data-url');
+                const isFav = favoriteTracks.includes(url);
+                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
+                btn.classList.toggle('text-red-500', isFav);
+            });
+
+            // If current playlist is from favorites and we removed a track, update the playlist
+            if (currentPlaylistSource === 'favorites') {
+                // Find the track in the current playlist and remove it
+                const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+                if (playlistIndex !== -1) {
+                    currentPlaylist.splice(playlistIndex, 1);
+                    originalPlaylist.splice(playlistIndex, 1);
+
+                    // Adjust current track index if needed
+                    if (currentTrackIndex > playlistIndex) {
+                        currentTrackIndex--;
+                    } else if (currentTrackIndex === playlistIndex) {
+                        // If we removed the currently playing track, stop playback
+                        if (currentTrackIndex >= currentPlaylist.length) {
+                            currentTrackIndex = currentPlaylist.length - 1;
+                        }
+                        if (currentTrackIndex >= 0) {
+                            playTrack(currentTrackIndex);
+                        } else {
+                            audio.pause();
+                            currentTrack = null;
+                        }
+                    }
+
+                    renderPlaylistTab();
+                }
+            }
+        }
+
+        function updateFavoriteButton(trackUrl) {
+            const isFavorite = favoriteTracks.includes(trackUrl);
+            const iconClass = isFavorite ? 'fas' : 'far';
+
+            // Update mini player favorite button
+            if (G('player-favorite-btn-mini')) {
+                G('player-favorite-btn-mini').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
+                G('player-favorite-btn-mini').classList.toggle('active', isFavorite);
+            }
+
+            // Update expanded player favorite button
+            if (G('player-favorite-btn-expanded')) {
+                G('player-favorite-btn-expanded').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
+                G('player-favorite-btn-expanded').classList.toggle('active', isFavorite);
+            }
+        }
+
+        // --- Sleep Timer ---
+        function startSleepTimer() {
+            const select = G('sleep-timer-select');
+            const status = G('sleep-timer-status');
+            const seconds = parseInt(select.value);
+
+            if (seconds === 0) {
+                if (sleepTimer) {
+                    clearInterval(sleepTimer);
+                    sleepTimer = null;
+                    status.textContent = '';
+                }
                 return;
             }
-        }
-        
-        playTrack(nextIndex);
-    };
-    
-    const playPrev = () => {
-        if (audio.currentTime > 3) {
-            audio.currentTime = 0;
-        } else {
-            let prevIndex;
-            if (isShuffle) {
-                // Get a random track that's not the current one
-                do {
-                    prevIndex = Math.floor(Math.random() * currentPlaylist.length);
-                } while (prevIndex === currentTrackIndex && currentPlaylist.length > 1);
-            } else {
-                prevIndex = currentTrackIndex - 1;
-            }
-            
-            if (prevIndex < 0) {
-                if (repeatMode === 'all') {
-                    prevIndex = currentPlaylist.length - 1;
-                } else {
-                    return; // Don't go to negative index
-                }
-            }
-            
-            playTrack(prevIndex);
-        }
-    };
-    
-    // --- Player UI Updates ---
-    function updatePlayerUI(track) {
-        const thumb = track.thumb || '';
-        [G('player-thumb-mini'), G('player-thumb-expanded')].forEach(el => { 
-            if (el) el.src = thumb; 
-        });
-        
-        if (G('player-title-mini')) G('player-title-mini').textContent = track.title;
-        if (G('player-title-expanded')) G('player-title-expanded').textContent = track.title;
-        if (G('player-performer-mini')) G('player-performer-mini').textContent = track.performer;
-        if (G('player-performer-expanded')) G('player-performer-expanded').textContent = track.performer;
-    }
-    
-    function setPlayPauseIcons(paused) {
-        const iconClass = paused ? 'fa-play' : 'fa-pause';
-        if (G('player-play-pause-btn-mini')) {
-            G('player-play-pause-btn-mini').innerHTML = `<i class="fas ${iconClass}"></i>`;
-        }
-        if (G('player-play-pause-btn-expanded')) {
-            G('player-play-pause-btn-expanded').innerHTML = `<i class="fas ${iconClass}"></i>`;
-        }
-    }
-    
-    function highlightActiveTrack() {
-        // Highlight in main list
-        document.querySelectorAll('#playlist-container .track-item').forEach(el => el.classList.remove('active'));
-        
-        // Highlight in "Up Next" list
-        document.querySelectorAll('#playlist-tracks-container .playlist-track-item').forEach(el => el.classList.remove('active'));
-        
-        // Highlight in favorites list
-        document.querySelectorAll('#favorites-container .favorite-track-item').forEach(el => el.classList.remove('active'));
-        
-        if (currentTrackIndex > -1 && currentPlaylist[currentTrackIndex]) {
-            const activeTrackUrl = currentPlaylist[currentTrackIndex].track_url;
-            
-            // Find and highlight in main playlist
-            const mainListItems = document.querySelectorAll('#playlist-container .track-item');
-            mainListItems.forEach(item => {
-                const downloadBtn = item.querySelector('.download-btn');
-                if (downloadBtn && downloadBtn.href.includes(activeTrackUrl)) {
-                    item.classList.add('active');
-                }
-            });
-            
-            // Highlight in playlist tab
-            const playlistListItem = document.querySelector(`#playlist-tracks-container .playlist-track-item:nth-child(${currentTrackIndex + 1})`);
-            playlistListItem?.classList.add('active');
-            
-            // Highlight in favorites tab if it's a favorite
-            const favoriteIndex = favoriteTracksData.findIndex(t => t.track_url === activeTrackUrl);
-            if (favoriteIndex !== -1) {
-                const favoriteListItem = document.querySelector(`#favorites-container .favorite-track-item:nth-child(${favoriteIndex + 2})`); // +2 because of the "Play All" button
-                favoriteListItem?.classList.add('active');
-            }
-        }
-    }
-    
-    // --- Favorite Tracks Management ---
-    function toggleFavorite(track) {
-        const index = favoriteTracks.indexOf(track.track_url);
-        const data_index = favoriteTracksData.findIndex(t => t.track_url === track.track_url);
-        
-        if (index > -1) {
-            // Remove from favorites
-            favoriteTracks.splice(index, 1);
-            if (data_index > -1) {
-                favoriteTracksData.splice(data_index, 1);
-            }
-            showToast("Removed from favorites");
-        } else {
-            // Add to favorites
-            favoriteTracks.push(track.track_url);
-            favoriteTracksData.push(track);
-            showToast("Added to favorites");
-        }
-        
-        // Save to localStorage
-        localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
-        localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
-        
-        updateFavoriteButton(track.track_url);
-        
-        // Update all favorite buttons in the main playlist
-        document.querySelectorAll('.favorite-btn-track').forEach(btn => {
-            const url = btn.getAttribute('data-url');
-            const isFav = favoriteTracks.includes(url);
-            btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
-            btn.classList.toggle('text-red-500', isFav);
-        });
-        
-        // Update all favorite buttons in the playlist tab
-        document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
-            const url = btn.getAttribute('data-url');
-            const isFav = favoriteTracks.includes(url);
-            btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
-            btn.classList.toggle('text-red-500', isFav);
-        });
-        
-        // Update favorites tab if it's currently visible
-        if (!G('favorites-tab').classList.contains('hidden')) {
-            renderFavoritesTab();
-        }
-        
-        // If current playlist is from favorites and we removed a track, update the playlist
-        if (currentPlaylistSource === 'favorites' && index > -1) {
-            // Find the track in the current playlist and remove it
-            const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-            if (playlistIndex !== -1) {
-                currentPlaylist.splice(playlistIndex, 1);
-                originalPlaylist.splice(playlistIndex, 1);
-                
-                // Adjust current track index if needed
-                if (currentTrackIndex > playlistIndex) {
-                    currentTrackIndex--;
-                } else if (currentTrackIndex === playlistIndex) {
-                    // If we removed the currently playing track, stop playback
-                    if (currentTrackIndex >= currentPlaylist.length) {
-                        currentTrackIndex = currentPlaylist.length - 1;
-                    }
-                    if (currentTrackIndex >= 0) {
-                        playTrack(currentTrackIndex);
-                    } else {
-                        audio.pause();
-                        currentTrack = null;
-                    }
-                }
-                
-                renderPlaylistTab();
-            }
-        }
-    }
-    
-    function removeFavorite(index) {
-        const track = favoriteTracksData[index];
-        if (!track) return;
-        
-        // Remove from arrays
-        favoriteTracksData.splice(index, 1);
-        const urlIndex = favoriteTracks.indexOf(track.track_url);
-        if (urlIndex > -1) {
-            favoriteTracks.splice(urlIndex, 1);
-        }
-        
-        // Save to localStorage
-        localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
-        localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
-        
-        // Update UI
-        updateFavoriteButton(track.track_url);
-        renderFavoritesTab();
-        showToast("Removed from favorites");
-        
-        // Update all favorite buttons in the main playlist
-        document.querySelectorAll('.favorite-btn-track').forEach(btn => {
-            const url = btn.getAttribute('data-url');
-            const isFav = favoriteTracks.includes(url);
-            btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
-            btn.classList.toggle('text-red-500', isFav);
-        });
-        
-        // Update all favorite buttons in the playlist tab
-        document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
-            const url = btn.getAttribute('data-url');
-            const isFav = favoriteTracks.includes(url);
-            btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
-            btn.classList.toggle('text-red-500', isFav);
-        });
-        
-        // If current playlist is from favorites and we removed a track, update the playlist
-        if (currentPlaylistSource === 'favorites') {
-            // Find the track in the current playlist and remove it
-            const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-            if (playlistIndex !== -1) {
-                currentPlaylist.splice(playlistIndex, 1);
-                originalPlaylist.splice(playlistIndex, 1);
-                
-                // Adjust current track index if needed
-                if (currentTrackIndex > playlistIndex) {
-                    currentTrackIndex--;
-                } else if (currentTrackIndex === playlistIndex) {
-                    // If we removed the currently playing track, stop playback
-                    if (currentTrackIndex >= currentPlaylist.length) {
-                        currentTrackIndex = currentPlaylist.length - 1;
-                    }
-                    if (currentTrackIndex >= 0) {
-                        playTrack(currentTrackIndex);
-                    } else {
-                        audio.pause();
-                        currentTrack = null;
-                    }
-                }
-                
-                renderPlaylistTab();
-            }
-        }
-    }
-    
-    function updateFavoriteButton(trackUrl) {
-        const isFavorite = favoriteTracks.includes(trackUrl);
-        const iconClass = isFavorite ? 'fas' : 'far';
-        
-        // Update mini player favorite button
-        if (G('player-favorite-btn-mini')) {
-            G('player-favorite-btn-mini').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-            G('player-favorite-btn-mini').classList.toggle('active', isFavorite);
-        }
-        
-        // Update expanded player favorite button
-        if (G('player-favorite-btn-expanded')) {
-            G('player-favorite-btn-expanded').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-            G('player-favorite-btn-expanded').classList.toggle('active', isFavorite);
-        }
-    }
-    
-    // --- Sleep Timer ---
-    function startSleepTimer() {
-        const select = G('sleep-timer-select');
-        const status = G('sleep-timer-status');
-        const seconds = parseInt(select.value);
-        
-        if (seconds === 0) {
+
+            sleepTimerSeconds = seconds;
+            status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
+
             if (sleepTimer) {
                 clearInterval(sleepTimer);
-                sleepTimer = null;
-                status.textContent = '';
             }
-            return;
+
+            sleepTimer = setInterval(() => {
+                sleepTimerSeconds--;
+                status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
+
+                if (sleepTimerSeconds <= 0) {
+                    clearInterval(sleepTimer);
+                    sleepTimer = null;
+                    audio.pause();
+                    showToast("Sleep timer: Playback stopped");
+                    status.textContent = '';
+                }
+            }, 1000);
+
+            showToast(`Sleep timer set for ${Math.floor(seconds / 60)} minutes`);
         }
-        
-        sleepTimerSeconds = seconds;
-        status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
-        
-        if (sleepTimer) {
-            clearInterval(sleepTimer);
-        }
-        
-        sleepTimer = setInterval(() => {
-            sleepTimerSeconds--;
-            status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
-            
-            if (sleepTimerSeconds <= 0) {
-                clearInterval(sleepTimer);
-                sleepTimer = null;
-                audio.pause();
-                showToast("Sleep timer: Playback stopped");
-                status.textContent = '';
-            }
-        }, 1000);
-        
-        showToast(`Sleep timer set for ${Math.floor(seconds / 60)} minutes`);
-    }
-    
-    // --- Event Listeners ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // Initialize search history
-        renderSearchHistory();
-        
-        // Main tab navigation
-        document.querySelectorAll('.main-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.dataset.tab;
-                
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize search history
+            renderSearchHistory();
+
+            // Main tab navigation
+            document.querySelectorAll('.main-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+
+                    // Hide all tabs
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.main-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+
+                    // Show selected tab
+                    G(`${tabName}-tab`).classList.remove('hidden');
+                    tab.classList.add('active');
+
+                    // Special handling for each tab
+                    if (tabName === 'favorites') {
+                        renderFavoritesTab();
+                    } else if (tabName === 'search' && lastPlaylistData) {
+                        // Restore last playlist data when switching back to search tab
+                        renderPlaylist(lastPlaylistData);
+                    } else if (tabName === 'playlists') {
+                        renderPlaylists();
+                    } else if (tabName === 'history') {
+                        renderPlaybackHistory();
+                    }
+                });
+            });
+
+            // Fetch button
+            G('fetch-btn').addEventListener('click', handleFetch);
+            G('sc-url-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleFetch();
+            });
+
+            // Clear history button
+            G('clear-history').addEventListener('click', () => {
+                searchHistory = [];
+                localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+                renderSearchHistory();
+                showToast("Search history cleared");
+            });
+
+            // Clear playback history button
+            G('clear-playback-history').addEventListener('click', () => {
+                if (confirm("Are you sure you want to clear your playback history?")) {
+                    clearPlaybackHistory();
+                }
+            });
+
+            // Create playlist button
+            G('create-playlist-btn').addEventListener('click', () => {
+                G('create-playlist-modal').classList.add('active');
+                G('playlist-name').value = '';
+                G('playlist-description').value = '';
+                G('playlist-name').focus();
+            });
+
+            // Modal event listeners
+            G('close-create-playlist-modal').addEventListener('click', () => {
+                G('create-playlist-modal').classList.remove('active');
+            });
+
+            G('cancel-create-playlist').addEventListener('click', () => {
+                G('create-playlist-modal').classList.remove('active');
+            });
+
+            G('confirm-create-playlist').addEventListener('click', () => {
+                const name = G('playlist-name').value.trim();
+                const description = G('playlist-description').value.trim();
+
+                if (!name) {
+                    showToast("Please enter a playlist name");
+                    return;
+                }
+
+                createPlaylist(name, description);
+                G('create-playlist-modal').classList.remove('active');
+                showToast("Playlist created");
+            });
+
+            // Close add to playlist modal
+            G('close-add-to-playlist-modal').addEventListener('click', () => {
+                G('add-to-playlist-modal').classList.remove('active');
+            });
+
+            G('cancel-add-to-playlist').addEventListener('click', () => {
+                G('add-to-playlist-modal').classList.remove('active');
+            });
+
+            // Context menu event listeners
+            G('ctx-play-next').addEventListener('click', () => {
+                if (contextMenuTrack) {
+                    addToQueue(contextMenuTrack, 'next');
+                }
+                hideContextMenu();
+            });
+
+            G('ctx-play-later').addEventListener('click', () => {
+                if (contextMenuTrack) {
+                    addToQueue(contextMenuTrack, 'end');
+                }
+                hideContextMenu();
+            });
+
+            G('ctx-add-to-playlist').addEventListener('click', () => {
+                if (contextMenuTrack) {
+                    showAddToPlaylistModal(contextMenuTrack);
+                }
+                hideContextMenu();
+            });
+
+            G('ctx-toggle-favorite').addEventListener('click', () => {
+                if (contextMenuTrack) {
+                    toggleFavorite(contextMenuTrack);
+                }
+                hideContextMenu();
+            });
+
+            G('ctx-download').addEventListener('click', () => {
+                if (contextMenuTrack) {
+                    const link = document.createElement('a');
+                    link.href = `${API_BASE_URL}/api/download?url=${encodeURIComponent(contextMenuTrack.track_url)}`;
+                    link.download = `${contextMenuTrack.title} - ${contextMenuTrack.performer}.mp3`;
+                    link.click();
+                }
+                hideContextMenu();
+            });
+
+            // Player expansion/minimization
+            G('minimized-player').addEventListener('click', (e) => {
+                if (e.target.closest('button')) return;
+
+                // Store current player tab before expanding
+                const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
+                if (activeTabButton) {
+                    lastPlayerTab = activeTabButton.dataset.tab;
+                }
+
+                G('persistent-player-container').classList.add('expanded');
+
+                // Ensure player UI is updated when expanding
+                if (currentTrack) {
+                    updatePlayerUI(currentTrack);
+                }
+
+                // Always switch to "Now Playing" tab when expanding
+                switchPlayerTab('now-playing');
+
+                // If the queue tab was the last active tab, update it
+                if (lastPlayerTab === 'queue') {
+                    renderPlayerQueue();
+                }
+            });
+
+            G('minimize-btn').addEventListener('click', () => {
+                // Store current player tab before minimizing
+                const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
+                if (activeTabButton) {
+                    lastPlayerTab = activeTabButton.dataset.tab;
+                }
+
+                G('persistent-player-container').classList.remove('expanded');
+
+                // Ensure player UI is updated when minimizing
+                if (currentTrack) {
+                    updatePlayerUI(currentTrack);
+                }
+            });
+
+            // Tab switching in player
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabName = btn.dataset.tab;
+                    switchPlayerTab(tabName);
+                });
+            });
+
+            // Function to switch player tabs
+            function switchPlayerTab(tabName) {
                 // Hide all tabs
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.add('hidden');
-                });
-                
-                // Remove active class from all tabs
-                document.querySelectorAll('.main-tab').forEach(t => {
-                    t.classList.remove('active');
-                });
-                
+                document.querySelectorAll('#expanded-player .tab-content').forEach(tab => tab.classList.add('hidden'));
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
                 // Show selected tab
                 G(`${tabName}-tab`).classList.remove('hidden');
-                tab.classList.add('active');
-                
-                // Special handling for favorites tab
-                if (tabName === 'favorites') {
-                    renderFavoritesTab();
-                } else if (tabName === 'search' && lastPlaylistData) {
-                    // Restore last playlist data when switching back to search tab
-                    renderPlaylist(lastPlaylistData);
-                }
-            });
-        });
-        
-        // Fetch button
-        G('fetch-btn').addEventListener('click', handleFetch);
-        G('sc-url-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleFetch();
-        });
-        
-        // Clear history button
-        G('clear-history').addEventListener('click', () => {
-            searchHistory = [];
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-            renderSearchHistory();
-            showToast("Search history cleared");
-        });
-        
-        // Player expansion/minimization
-        G('minimized-player').addEventListener('click', (e) => {
-            if (e.target.closest('button')) return;
-            
-            // Store current player tab before expanding
-            const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
-            if (activeTabButton) {
-                lastPlayerTab = activeTabButton.dataset.tab;
-            }
-            
-            G('persistent-player-container').classList.add('expanded');
-            
-            // Ensure player UI is updated when expanding
-            if (currentTrack) {
-                updatePlayerUI(currentTrack);
-            }
-            
-            // Always switch to "Now Playing" tab when expanding
-            switchPlayerTab('now-playing');
-        });
-        
-        G('minimize-btn').addEventListener('click', () => {
-            // Store current player tab before minimizing
-            const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
-            if (activeTabButton) {
-                lastPlayerTab = activeTabButton.dataset.tab;
-            }
-            
-            G('persistent-player-container').classList.remove('expanded');
-            
-            // Ensure player UI is updated when minimizing
-            if (currentTrack) {
-                updatePlayerUI(currentTrack);
-            }
-        });
-        
-        // Tab switching in player
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabName = btn.dataset.tab;
-                switchPlayerTab(tabName);
-            });
-        });
-        
-        // Function to switch player tabs
-        function switchPlayerTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('#expanded-player .tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            
-            // Show selected tab
-            G(`${tabName}-tab`).classList.remove('hidden');
-            document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
-            
-            // Store the active tab
-            lastPlayerTab = tabName;
-            
-            // Special handling for playlist tab
-            if (tabName === 'playlist') {
-                renderPlaylistTab();
-            }
-        }
-        
-        // Player Controls
-        [G('player-play-pause-btn-mini'), G('player-play-pause-btn-expanded')].forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (currentTrackIndex === -1 && currentPlaylist.length > 0) {
-                    playTrack(0);
-                } else if (audio.paused) {
-                    audio.play();
-                } else {
-                    audio.pause();
-                }
-            });
-        });
-        
-        G('player-next-btn').addEventListener('click', playNext);
-        G('player-prev-btn').addEventListener('click', playPrev);
-        
-        // Favorite buttons
-        [G('player-favorite-btn-mini'), G('player-favorite-btn-expanded')].forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
-                    toggleFavorite(currentPlaylist[currentTrackIndex]);
-                }
-            });
-        });
-        
-        // Share button
-        G('player-share-btn').addEventListener('click', () => {
-            if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
-                const track = currentPlaylist[currentTrackIndex];
-                if (navigator.share) {
-                    navigator.share({
-                        title: track.title,
-                        text: `Check out ${track.title} by ${track.performer} on SoundCloud`,
-                        url: track.track_url
-                    }).catch(err => console.log('Error sharing:', err));
-                } else {
-                    // Fallback - copy to clipboard
-                    navigator.clipboard.writeText(track.track_url).then(() => {
-                        showToast("Link copied to clipboard");
-                    }).catch(err => {
-                        console.error('Could not copy text: ', err);
-                        showToast("Failed to copy link");
-                    });
+                document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
+
+                // Store the active tab
+                lastPlayerTab = tabName;
+
+                // Special handling for queue tab - update when switching to it
+                if (tabName === 'queue') {
+                    renderPlayerQueue();
                 }
             }
-        });
-        
-        // Shuffle
-        G('player-shuffle-btn').addEventListener('click', (e) => {
-            isShuffle = !isShuffle;
-            e.currentTarget.classList.toggle('active', isShuffle);
-            
-            if (currentTrackIndex === -1) return; // Don't shuffle if nothing is playing
-            
-            if (isShuffle) {
-                const current = currentPlaylist[currentTrackIndex];
-                const otherTracks = currentPlaylist.filter((_, i) => i !== currentTrackIndex);
-                const shuffledOtherTracks = shuffleArray(otherTracks);
-                currentPlaylist = [current, ...shuffledOtherTracks];
-                currentTrackIndex = 0;
-            } else {
-                const currentUrl = currentPlaylist[currentTrackIndex].track_url;
-                currentPlaylist = [...originalPlaylist];
-                currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === currentUrl);
-            }
-            
-            renderPlaylistTab();
-            showToast(isShuffle ? "Shuffle enabled" : "Shuffle disabled");
-        });
-        
-        // Repeat
-        G('player-repeat-btn').addEventListener('click', (e) => {
-            const modes = ['none', 'all', 'one'];
-            const nextIndex = (modes.indexOf(repeatMode) + 1) % modes.length;
-            repeatMode = modes[nextIndex];
-            
-            // Update icon based on mode
-            const iconMap = {
-                'none': 'fa-redo',
-                'all': 'fa-redo',
-                'one': 'fa-redo'
-            };
-            
-            e.currentTarget.innerHTML = `<i class="fas ${iconMap[repeatMode]} text-lg"></i>`;
-            e.currentTarget.classList.toggle('active', repeatMode !== 'none');
-            
-            // Add a visual indicator for 'one' mode
-            if (repeatMode === 'one') {
-                e.currentTarget.innerHTML = `<i class="fas fa-redo text-lg"></i><span class="absolute text-xs">1</span>`;
-                e.currentTarget.style.position = 'relative';
-            } else {
-                e.currentTarget.style.position = '';
-            }
-            
-            const modeNames = {
-                'none': 'Repeat off',
-                'all': 'Repeat all',
-                'one': 'Repeat one'
-            };
-            
-            showToast(modeNames[repeatMode]);
-        });
-        
-        // Volume
-        G('player-volume-slider').addEventListener('input', e => {
-            audio.volume = e.target.value / 100;
-        });
-        
-        // Progress bar
-        const progressContainer = G('progress-container');
-        const progressHandler = e => {
-            if (!audio.duration) return;
-            
-            const rect = progressContainer.getBoundingClientRect();
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            if (clientX === undefined) return;
-            
-            const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-            audio.currentTime = pos * audio.duration;
-            G('player-progress-bar').style.width = `${pos * 100}%`;
-        };
-        
-        progressContainer.addEventListener('mousedown', e => {
-            isDraggingProgress = true;
-            progressHandler(e);
-        });
-        
-        document.addEventListener('mousemove', e => {
-            if (isDraggingProgress) progressHandler(e);
-        });
-        
-        document.addEventListener('mouseup', () => {
-            isDraggingProgress = false;
-        });
-        
-        progressContainer.addEventListener('touchstart', e => {
-            isDraggingProgress = true;
-            progressHandler(e);
-        });
-        
-        document.addEventListener('touchmove', e => {
-            if (isDraggingProgress) progressHandler(e);
-        });
-        
-        document.addEventListener('touchend', () => {
-            isDraggingProgress = false;
-        });
-        
-        // Sleep timer
-        G('start-sleep-timer').addEventListener('click', startSleepTimer);
-        
-        // Audio events
-        audio.addEventListener('play', () => setPlayPauseIcons(false));
-        audio.addEventListener('pause', () => setPlayPauseIcons(true));
-        audio.addEventListener('ended', playNext);
-        
-        audio.addEventListener('loadedmetadata', () => {
-            G('player-total-duration').textContent = formatTime(audio.duration);
-            // Hide loading indicators
-            G('player-loading-indicator').classList.add('hidden');
-            G('player-loading-indicator-expanded').classList.add('hidden');
-        });
-        
-        audio.addEventListener('timeupdate', () => {
-            G('player-current-time').textContent = formatTime(audio.currentTime);
-            if (!isDraggingProgress && audio.duration) {
-                G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-            }
-        });
-        
-        audio.addEventListener('error', (e) => {
-            console.error('Audio error:', e);
-            showToast("Error loading track. Please try again.");
-            // Hide loading indicators
-            G('player-loading-indicator').classList.add('hidden');
-            G('player-loading-indicator-expanded').classList.add('hidden');
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ignore if user is typing in an input field
-            if (e.target.tagName === 'INPUT') return;
-            
-            switch(e.key) {
-                case ' ':
-                    e.preventDefault();
+
+            // Player Controls
+            [G('player-play-pause-btn-mini'), G('player-play-pause-btn-expanded')].forEach(btn => {
+                btn.addEventListener('click', () => {
                     if (currentTrackIndex === -1 && currentPlaylist.length > 0) {
                         playTrack(0);
                     } else if (audio.paused) {
@@ -1390,41 +2671,343 @@
                     } else {
                         audio.pause();
                     }
-                    break;
-                case 'ArrowRight':
-                    e.preventDefault();
-                    playNext();
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    playPrev();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    audio.volume = Math.min(1, audio.volume + 0.1);
-                    G('player-volume-slider').value = audio.volume * 100;
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    audio.volume = Math.max(0, audio.volume - 0.1);
-                    G('player-volume-slider').value = audio.volume * 100;
-                    break;
-                case 's':
-                case 'S':
-                    e.preventDefault();
-                    G('player-shuffle-btn').click();
-                    break;
-                case 'r':
-                case 'R':
-                    e.preventDefault();
-                    G('player-repeat-btn').click();
-                    break;
-            }
+                });
+            });
+
+            G('player-next-btn').addEventListener('click', playNext);
+            G('player-prev-btn').addEventListener('click', playPrev);
+
+            // Favorite buttons
+            [G('player-favorite-btn-mini'), G('player-favorite-btn-expanded')].forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
+                        toggleFavorite(currentPlaylist[currentTrackIndex]);
+                    }
+                });
+            });
+
+            // Share button
+            G('player-share-btn').addEventListener('click', () => {
+                if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
+                    const track = currentPlaylist[currentTrackIndex];
+                    if (navigator.share) {
+                        navigator.share({
+                            title: track.title,
+                            text: `Check out ${track.title} by ${track.performer} on SoundCloud`,
+                            url: track.track_url
+                        }).catch(err => console.log('Error sharing:', err));
+                    } else {
+                        // Fallback - copy to clipboard
+                        navigator.clipboard.writeText(track.track_url).then(() => {
+                            showToast("Link copied to clipboard");
+                        }).catch(err => {
+                            console.error('Could not copy text: ', err);
+                            showToast("Failed to copy link");
+                        });
+                    }
+                }
+            });
+
+            // Shuffle
+            G('player-shuffle-btn').addEventListener('click', (e) => {
+                isShuffle = !isShuffle;
+                e.currentTarget.classList.toggle('active', isShuffle);
+
+                if (currentTrackIndex === -1) return; // Don't shuffle if nothing is playing
+
+                if (isShuffle) {
+                    const current = currentPlaylist[currentTrackIndex];
+                    const otherTracks = currentPlaylist.filter((_, i) => i !== currentTrackIndex);
+                    const shuffledOtherTracks = shuffleArray(otherTracks);
+                    currentPlaylist = [current, ...shuffledOtherTracks];
+                    currentTrackIndex = 0;
+                } else {
+                    const currentUrl = currentPlaylist[currentTrackIndex].track_url;
+                    currentPlaylist = [...originalPlaylist];
+                    currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === currentUrl);
+                }
+
+                renderPlaylistTab();
+                showToast(isShuffle ? "Shuffle enabled" : "Shuffle disabled");
+            });
+
+            // Repeat
+            G('player-repeat-btn').addEventListener('click', (e) => {
+                const modes = ['none', 'all', 'one'];
+                const nextIndex = (modes.indexOf(repeatMode) + 1) % modes.length;
+                repeatMode = modes[nextIndex];
+
+                // Update icon based on mode
+                const iconMap = {
+                    'none': 'fa-redo',
+                    'all': 'fa-redo',
+                    'one': 'fa-redo'
+                };
+
+                e.currentTarget.innerHTML = `<i class="fas ${iconMap[repeatMode]} text-lg"></i>`;
+                e.currentTarget.classList.toggle('active', repeatMode !== 'none');
+
+                // Add a visual indicator for 'one' mode
+                if (repeatMode === 'one') {
+                    e.currentTarget.innerHTML = `<i class="fas fa-redo text-lg"></i><span class="absolute text-xs">1</span>`;
+                    e.currentTarget.style.position = 'relative';
+                } else {
+                    e.currentTarget.style.position = '';
+                }
+
+                const modeNames = {
+                    'none': 'Repeat off',
+                    'all': 'Repeat all',
+                    'one': 'Repeat one'
+                };
+
+                showToast(modeNames[repeatMode]);
+            });
+
+            // Volume
+            G('player-volume-slider').addEventListener('input', e => {
+                audio.volume = e.target.value / 100;
+            });
+
+            // Crossfade slider
+            G('crossfade-slider').addEventListener('input', e => {
+                crossfadeDuration = parseFloat(e.target.value);
+                G('crossfade-value').textContent = `${crossfadeDuration}s`;
+
+                // Disable gapless playback when crossfade is enabled
+                if (crossfadeDuration > 0) {
+                    gaplessPlayback = false;
+                    G('gapless-playback').checked = false;
+                }
+            });
+
+            // Gapless playback checkbox
+            G('gapless-playback').addEventListener('change', e => {
+                gaplessPlayback = e.target.checked;
+
+                // Disable crossfade when gapless playback is enabled
+                if (gaplessPlayback) {
+                    crossfadeDuration = 0;
+                    G('crossfade-slider').value = 0;
+                    G('crossfade-value').textContent = '0s';
+                }
+            });
+
+            // Progress bar
+            const progressContainer = G('progress-container');
+            const progressHandler = e => {
+                if (!audio.duration) return;
+
+                const rect = progressContainer.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                if (clientX === undefined) return;
+
+                const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                audio.currentTime = pos * audio.duration;
+                G('player-progress-bar').style.width = `${pos * 100}%`;
+            };
+
+            progressContainer.addEventListener('mousedown', e => {
+                isDraggingProgress = true;
+                progressHandler(e);
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (isDraggingProgress) progressHandler(e);
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDraggingProgress = false;
+            });
+
+            progressContainer.addEventListener('touchstart', e => {
+                isDraggingProgress = true;
+                progressHandler(e);
+            });
+
+            document.addEventListener('touchmove', e => {
+                if (isDraggingProgress) progressHandler(e);
+            });
+
+            document.addEventListener('touchend', () => {
+                isDraggingProgress = false;
+            });
+
+            // Sleep timer
+            G('start-sleep-timer').addEventListener('click', startSleepTimer);
+
+            // Audio events
+            audio.addEventListener('play', () => {
+                setPlayPauseIcons(false);
+                renderPlayerQueue(); // Update queue when playback starts
+            });
+
+            audio.addEventListener('pause', () => {
+                setPlayPauseIcons(true);
+                renderPlayerQueue(); // Update queue when playback pauses
+            });
+
+            audio.addEventListener('ended', () => {
+                playNext();
+                renderPlayerQueue(); // Update queue when track ends
+            });
+
+            audio.addEventListener('loadedmetadata', () => {
+                G('player-total-duration').textContent = formatTime(audio.duration);
+                // Hide loading indicators
+                G('player-loading-indicator').classList.add('hidden');
+                G('player-loading-indicator-expanded').classList.add('hidden');
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                G('player-current-time').textContent = formatTime(audio.currentTime);
+                if (!isDraggingProgress && audio.duration) {
+                    G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+                }
+            });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                showToast("Error loading track. Please try again.");
+                // Hide loading indicators
+                G('player-loading-indicator').classList.add('hidden');
+                G('player-loading-indicator-expanded').classList.add('hidden');
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Ignore if user is typing in an input field
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                switch (e.key) {
+                    case ' ':
+                        e.preventDefault();
+                        if (currentTrackIndex === -1 && currentPlaylist.length > 0) {
+                            playTrack(0);
+                        } else if (audio.paused) {
+                            audio.play();
+                        } else {
+                            audio.pause();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        playNext();
+                        break;
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        playPrev();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        audio.volume = Math.min(1, audio.volume + 0.1);
+                        G('player-volume-slider').value = audio.volume * 100;
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        audio.volume = Math.max(0, audio.volume - 0.1);
+                        G('player-volume-slider').value = audio.volume * 100;
+                        break;
+                    case 's':
+                    case 'S':
+                        e.preventDefault();
+                        G('player-shuffle-btn').click();
+                        break;
+                    case 'r':
+                    case 'R':
+                        e.preventDefault();
+                        G('player-repeat-btn').click();
+                        break;
+                }
+            });
+
+            // Initialize UI
+            setPlayPauseIcons(true);
         });
+
+        // Helper function to show "Add to Playlist" modal
+        function showAddToPlaylistModal(track) {
+            const container = G('playlist-options-container');
+            container.innerHTML = '';
+
+            if (playlists.length === 0) {
+                container.innerHTML = `
+            <p class="text-center" style="color: var(--hint-color);">No playlists available</p>
+            <button class="btn btn-primary w-full mt-2" id="create-playlist-from-modal">Create New Playlist</button>
+        `;
+
+                G('create-playlist-from-modal').addEventListener('click', () => {
+                    G('add-to-playlist-modal').classList.remove('active');
+                    G('create-playlist-modal').classList.add('active');
+                });
+            } else {
+                playlists.forEach(playlist => {
+                    const option = document.createElement('div');
+                    option.className = 'context-menu-item';
+                    option.innerHTML = `<i class="fas fa-music"></i> ${playlist.name}`;
+                    option.dataset.playlistId = playlist.id;
+                    option.addEventListener('click', () => {
+                        const playlistId = option.dataset.playlistId;
+                        addTrackToPlaylist(playlistId, track);
+                        G('add-to-playlist-modal').classList.remove('active');
+                    });
+                    container.appendChild(option);
+                });
+            }
+
+            G('add-to-playlist-modal').classList.add('active');
+        }
+
+        // Add CSS for toggle switch
+        const style = document.createElement('style');
+        style.textContent = `
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
         
-        // Initialize UI
-        setPlayPauseIcons(true);
-    });
-</script>
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    `;
+        document.head.appendChild(style);
+    </script>
 </body>
+
 </html>
