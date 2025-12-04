@@ -3,1020 +3,928 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SoundCloud Web Player</title>
-    <!-- Tailwind CSS for styling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SoundCloud Web Player 2025</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        /* Theme setup and player-specific styles */
-        :root {
-            --bg-color: #121212;
-            --text-color: #ffffff;
-            --hint-color: #a1a1aa;
+        /* --- 2025 Design System --- */
+        
+         :root {
+            --bg-deep: #09090b;
+            --bg-card: rgba(24, 24, 27, 0.6);
+            --bg-card-hover: rgba(39, 39, 42, 0.8);
+            --primary-gradient: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
             --primary-color: #8b5cf6;
-            /* A nice purple */
-            --primary-text-color: #ffffff;
-            --secondary-bg-color: #1f1f23;
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(20px);
+            --radius-lg: 16px;
+            --radius-xl: 24px;
         }
-
-        html,
+        
         body {
-            overscroll-behavior: none;
-            /* Prevents "pull-to-refresh" on mobile */
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            /* Mesh Gradient Background */
+            background-image: radial-gradient(circle at 15% 50%, rgba(124, 58, 237, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(79, 70, 229, 0.15), transparent 25%);
             display: flex;
             flex-direction: column;
             height: 100vh;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-
+        /* Custom Scrollbar */
+        
+         ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
         #main-content {
             flex-grow: 1;
             overflow-y: auto;
-            padding-bottom: 150px;
-            /* Space for the player */
+            padding-bottom: 140px;
+            /* Space for floating player */
+            position: relative;
+            z-index: 10;
         }
-
+        /* Card / Glass Styles */
+        
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        /* Inputs & Forms */
+        
         .form-input,
-        .btn-secondary {
-            background-color: var(--secondary-bg-color);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .form-select {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid var(--border-light) !important;
+            color: white !important;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
-
+        
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+        /* Buttons */
+        
         .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--primary-text-color);
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .btn-primary:disabled {
-            background-color: #583c9c;
-            cursor: not-allowed;
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
         }
-
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(5px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        /* Tabs (Segmented Control) */
+        
+        .nav-tabs-container {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            display: flex;
+            gap: 4px;
+        }
+        
+        .main-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+        
+        .main-tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .main-tab:hover:not(.active) {
+            color: white;
+        }
+        /* Track Items */
+        
         .track-item,
         .playlist-track-item,
         .favorite-track-item,
-        .history-track-item {
-            cursor: pointer;
-            transition: all 0.2s;
+        .history-track-item,
+        .queue-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
         }
-
+        
         .track-item:hover,
         .playlist-track-item:hover,
         .favorite-track-item:hover,
-        .history-track-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
+        .history-track-item:hover,
+        .queue-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.05);
+            transform: scale(1.01);
         }
-
+        
         .track-item.active,
         .playlist-track-item.active,
         .favorite-track-item.active,
         .history-track-item.active {
-            background-color: var(--primary-color) !important;
+            background: rgba(139, 92, 246, 0.15) !important;
+            border-color: var(--primary-color) !important;
         }
-
+        
         .track-item.active p,
         .playlist-track-item.active p,
         .favorite-track-item.active p,
         .history-track-item.active p {
-            color: var(--primary-text-color) !important;
+            color: #c4b5fd !important;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
-
-        /* Player Styling */
+        /* Persistent Player (Glass & Floating) */
+        
         #persistent-player-container {
             position: fixed;
+            bottom: 20px;
+            /* Floating look */
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            width: calc(100% - 32px);
+            max-width: 700px;
+            z-index: 50;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #persistent-player-container.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        /* Minimized Player */
+        
+        #minimized-player {
+            background: rgba(20, 20, 25, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 12px;
+        }
+        /* Expanded Player (Full Screen) */
+        
+        #persistent-player-container.expanded {
             bottom: 0;
             left: 0;
             width: 100%;
-            z-index: 40;
-            background: linear-gradient(to top, var(--secondary-bg-color), rgba(31, 31, 35, 0.95));
-            backdrop-filter: blur(10px);
-            transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        #persistent-player-container.show {
-            transform: translateY(0);
-        }
-
-        #persistent-player-container.expanded {
-            transform: translateY(0);
-            top: 0;
             height: 100%;
-            z-index: 50;
-            background: linear-gradient(135deg, #1f1f24, #121216);
+            max-width: none;
+            transform: translateY(0);
+            border-radius: 0;
+            background: linear-gradient(to bottom, #1e1b4b, #09090b);
+            z-index: 100;
         }
-
-        .progress-bar-container {
-            background-color: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            height: 6px;
-            border-radius: 3px;
-        }
-
-        .progress-bar-container:hover {
-            height: 8px;
-        }
-
-        .progress-bar-filled {
-            background-color: var(--primary-color);
-            height: 100%;
-            border-radius: 3px;
-            position: relative;
-            pointer-events: none;
-        }
-
-        .progress-bar-filled::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: -3px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--primary-text-color);
-        }
-
-        .player-controls button {
-            transition: all 0.2s;
-        }
-
-        .player-controls button:hover {
-            transform: scale(1.1);
-        }
-
-        .player-controls button:active {
-            transform: scale(0.95);
-        }
-
-        .repeat-btn.active,
-        .shuffle-btn.active {
-            color: var(--primary-color);
-        }
-
-        .tab-button {
-            transition: all 0.3s;
-            color: var(--hint-color);
-        }
-
-        .tab-button.active {
-            border-bottom: 2px solid var(--primary-color);
-            color: var(--text-color);
-        }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            cursor: pointer;
-            width: 100px;
-        }
-
-        .volume-slider::-webkit-slider-runnable-track {
-            background: rgba(255, 255, 255, 0.2);
-            height: 4px;
-            border-radius: 2px;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            background: var(--primary-color);
-            height: 14px;
-            width: 14px;
-            border-radius: 50%;
-            margin-top: -5px;
-        }
-
-        .favorite-btn.active {
-            color: #ef4444;
-        }
-
-        .history-item {
-            transition: all 0.2s;
-        }
-
-        .history-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .tooltip {
-            position: relative;
-        }
-
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .tooltip:hover::after {
-            opacity: 1;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.6;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.6;
-            }
-        }
-
-        .loading-track {
-            animation: pulse 1.5s infinite;
-        }
-
-        #minimized-player {
-            display: block;
-        }
-
+        
         #expanded-player {
             display: none;
+            /* Logic controlled by JS */
+            background: radial-gradient(circle at top center, rgba(124, 58, 237, 0.2), transparent 70%);
         }
-
+        
         #persistent-player-container.expanded #minimized-player {
             display: none;
         }
-
+        
         #persistent-player-container.expanded #expanded-player {
             display: flex;
         }
-
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* Progress Bar */
+        
+        .progress-bar-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 4px;
+            overflow: visible;
+            transition: height 0.2s;
+        }
+        
+        .progress-bar-container:hover {
+            height: 6px;
+        }
+        
+        .progress-bar-filled {
+            background: var(--primary-gradient);
             height: 100%;
-            color: var(--hint-color);
-            padding: 2rem 0;
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--primary-glow);
+            position: relative;
         }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+        
+        .progress-bar-filled::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
-
-        .main-tab {
-            padding: 0.75rem 1rem;
-            font-weight: 500;
+        
+        .progress-bar-container:hover .progress-bar-filled::after {
+            opacity: 1;
+        }
+        /* Volume Slider */
+        
+        .volume-slider {
+            -webkit-appearance: none;
+            background: transparent;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: white;
             cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 2px solid transparent;
-            color: var(--hint-color);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
-
-        .main-tab.active {
-            color: var(--text-color);
-            border-bottom-color: var(--primary-color);
+        /* Controls */
+        
+        .player-controls button {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
         }
-
-        .main-tab:hover {
-            color: var(--text-color);
+        
+        .player-controls button:active {
+            transform: scale(0.9);
         }
-
-        .tab-content {
-            display: block;
+        
+        #player-play-pause-btn-expanded {
+            background: white;
+            color: black;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
-
-        .tab-content.hidden {
-            display: none;
+        
+        #player-play-pause-btn-expanded:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
         }
-
-        .play-all-btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 1rem;
-        }
-
-        .play-all-btn:hover {
-            background-color: #7c3aed;
-        }
-
-        .playlist-item {
-            background-color: var(--secondary-bg-color);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.2s;
-        }
-
-        .playlist-item:hover {
-            background-color: rgba(139, 92, 246, 0.2);
-        }
-
-        .playlist-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .playlist-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .playlist-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .playlist-track-count {
-            font-size: 0.8rem;
-            color: var(--hint-color);
-            margin-bottom: 0.5rem;
-        }
-
-        .create-playlist-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .create-playlist-btn:hover {
-            background-color: #7c3aed;
-        }
-
-        .queue-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            background-color: var(--secondary-bg-color);
-            margin-bottom: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .queue-item:hover {
-            background-color: rgba(139, 92, 246, 0.2);
-        }
-
-        .queue-item.dragging {
-            opacity: 0.5;
-        }
-
-        .queue-item-handle {
-            cursor: grab;
-            margin-right: 0.75rem;
-            color: var(--hint-color);
-        }
-
-        .queue-item-handle:active {
-            cursor: grabbing;
-        }
-
-        .queue-item-info {
-            flex-grow: 1;
-            min-width: 0;
-        }
-
-        .queue-item-title {
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .queue-item-artist {
-            font-size: 0.8rem;
-            color: var(--hint-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .queue-item-duration {
-            margin-left: 0.75rem;
-            font-size: 0.8rem;
-            color: var(--hint-color);
-        }
-
-        .queue-item-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-left: 0.75rem;
-        }
-
-        .queue-add-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 1rem;
-        }
-
-        .queue-add-btn:hover {
-            background-color: #7c3aed;
-        }
-
-        .settings-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .settings-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-color);
-        }
-
-        .settings-control {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .settings-label {
-            color: var(--text-color);
-        }
-
-        .settings-value {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
+        /* Modals */
+        
         .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             z-index: 100;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s;
         }
-
+        
         .modal.active {
             opacity: 1;
             pointer-events: auto;
         }
-
+        
         .modal-content {
-            background-color: var(--bg-color);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background: #18181b;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: var(--radius-xl);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        
+        @keyframes modalPop {
+            from {
+                transform: scale(0.95) translateY(10px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--hint-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: var(--text-color);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            background-color: var(--secondary-bg-color);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-        }
-
-        .form-input:focus,
-        .form-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-bg-color);
-            color: var(--text-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: var(--primary-text-color);
-        }
-
-        .btn-primary:hover {
-            background-color: #7c3aed;
-        }
-
+        /* Context Menu */
+        
         .context-menu {
-            position: absolute;
-            background-color: var(--secondary-bg-color);
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            z-index: 200;
-            min-width: 200px;
-            overflow: hidden;
+            background: rgba(24, 24, 27, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 4px;
         }
-
+        
         .context-menu-item {
-            padding: 0.75rem 1rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            border-radius: 6px;
         }
-
+        
         .context-menu-item:hover {
-            background-color: rgba(139, 92, 246, 0.2);
+            background: var(--primary-color);
+            color: white;
         }
-
-        .context-menu-divider {
-            height: 1px;
+        /* Animations */
+        
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+            }
+        }
+        
+        .loading-track {
+            animation: pulse 1.5s infinite;
+        }
+        /* Album Art Shadow */
+        
+        #player-thumb-expanded {
+            box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Tab Buttons in Player */
+        
+        .tab-button {
+            position: relative;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .tab-button.active {
+            color: white;
+            border-bottom: none;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        /* Dragging state */
+        
+        .queue-item.dragging {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px dashed var(--primary-color);
+            opacity: 0.8;
+        }
+        /* Tooltip */
+        
+        .tooltip::after {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        /* Switch */
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: rgba(255, 255, 255, 0.1);
-            margin: 0.5rem 0;
+            transition: .4s;
+            border-radius: 34px;
         }
-
-        /* Footer Styles */
-        footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 1rem;
-        }
-
-        footer a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: all 0.2s ease;
         }
-
-        footer a:hover {
-            background-color: rgba(139, 92, 246, 0.2);
-            transform: translateY(-2px);
+        
+        input:checked+.slider {
+            background-color: var(--primary-color);
+        }
+        
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+        /* Utility Helpers */
+        
+        .text-gradient {
+            background: linear-gradient(to right, #a78bfa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .empty-state i {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 
-<body class="font-sans">
+<body class="antialiased selection:bg-purple-500 selection:text-white">
+    <!-- Background glow effects -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-900/20 rounded-full blur-[100px]"></div>
+    </div>
+
     <div id="main-content">
-        <div class="container mx-auto p-4 max-w-2xl">
-            <div class="text-center mb-6">
-                <h1
-                    class="text-3xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
-                    SoundCloud Player</h1>
-                <p class="text-sm mt-2" style="color: var(--hint-color);">Paste a link to fetch and play music</p>
+        <div class="container mx-auto p-4 max-w-2xl relative z-10 pt-8">
+            <div class="text-center mb-8">
+                <div class="inline-block p-3 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-4 shadow-xl">
+                    <i class="fab fa-soundcloud text-4xl text-gradient"></i>
+                </div>
+                <h1 class="text-4xl font-bold tracking-tight text-white mb-2">SoundCloud
+                    <span class="text-gradient">Player</span></h1>
+                <p class="text-sm text-gray-400 font-medium">Stream high-quality audio instantly</p>
             </div>
 
-            <!-- Main Navigation Tabs -->
-            <div class="flex border-b border-white/10 mb-4">
-                <button class="main-tab flex-1 text-center active" data-tab="search">Search</button>
-                <button class="main-tab flex-1 text-center" data-tab="favorites">Favorites</button>
-                <button class="main-tab flex-1 text-center" data-tab="playlists">Playlists</button>
-                <button class="main-tab flex-1 text-center" data-tab="history">History</button>
+            <!-- Main Navigation Tabs - Segmented Control Style -->
+            <div class="nav-tabs-container mb-6">
+                <button class="main-tab flex-1 active" data-tab="search"><i
+                            class="fas fa-search mr-2"></i>Search</button>
+                <button class="main-tab flex-1" data-tab="favorites"><i
+                            class="fas fa-heart mr-2"></i>Favorites</button>
+                <button class="main-tab flex-1" data-tab="playlists"><i
+                            class="fas fa-list mr-2"></i>Playlists</button>
+                <button class="main-tab flex-1" data-tab="history"><i
+                            class="fas fa-clock mr-2"></i>History</button>
             </div>
 
             <!-- Search Tab Content -->
             <div id="search-tab" class="tab-content">
-                <div class="flex gap-2 mb-4">
-                    <input id="sc-url-input" type="text" placeholder="https://soundcloud.com/..."
-                        class="form-input w-full p-3 rounded-lg border-none focus:ring-2 focus:ring-violet-500 focus:outline-none">
-                    <button id="fetch-btn"
-                        class="btn-primary font-bold py-3 px-5 rounded-lg whitespace-nowrap flex items-center justify-center gap-2"><i
-                            class="fas fa-search"></i> Fetch</button>
+                <div class="glass-panel p-2 mb-6 flex gap-2">
+                    <input id="sc-url-input" type="text" placeholder="Paste SoundCloud Link..." class="bg-transparent border-none text-white w-full px-4 py-3 focus:outline-none placeholder-gray-500 font-medium">
+                    <button id="fetch-btn" class="btn-primary font-semibold py-2 px-6 rounded-lg whitespace-nowrap flex items-center justify-center gap-2 shadow-lg hover:shadow-purple-500/30">
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
                 </div>
 
                 <!-- Search History -->
-                <div id="search-history" class="mb-4 hidden">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-sm font-semibold" style="color: var(--hint-color);">Recent Searches</h3>
-                        <button id="clear-history" class="text-xs" style="color: var(--hint-color);">Clear</button>
+                <div id="search-history" class="mb-6 hidden">
+                    <div class="flex justify-between items-center mb-3 px-2">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-gray-500">Recent</h3>
+                        <button id="clear-history" class="text-xs text-purple-400 hover:text-purple-300 font-medium">Clear
+                                All</button>
                     </div>
                     <div id="history-container" class="flex flex-wrap gap-2"></div>
                 </div>
 
-                <div id="loader" class="text-center my-8 hidden">
-                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto">
+                <div id="loader" class="text-center my-12 hidden">
+                    <div class="relative w-16 h-16 mx-auto">
+                        <div class="absolute inset-0 border-4 border-purple-500/30 rounded-full"></div>
+                        <div class="absolute inset-0 border-4 border-purple-500 rounded-full border-t-transparent animate-spin"></div>
                     </div>
-                    <p class="mt-3" style="color: var(--hint-color);">Loading tracks...</p>
+                    <p class="mt-4 text-gray-400 animate-pulse">Fetching tracks...
+                    </p>
                 </div>
-                <div id="error-display"
-                    class="bg-red-900/50 text-red-300 p-4 rounded-lg my-4 hidden flex items-start gap-3"><i
-                        class="fas fa-exclamation-circle mt-1"></i><span id="error-message"></span></div>
 
-                <div id="playlist-header" class="mt-6 hidden"></div>
-                <div id="playlist-container" class="mt-2 space-y-2"></div>
+                <div id="error-display" class="bg-red-500/10 border border-red-500/20 backdrop-blur-md text-red-200 p-4 rounded-xl my-4 hidden flex items-start gap-3">
+                    <div class="bg-red-500/20 p-2 rounded-full"><i class="fas fa-exclamation-triangle"></i></div>
+                    <span id="error-message" class="mt-1 font-medium"></span>
+                </div>
+
+                <div id="playlist-header" class="mt-6 mb-4 hidden px-2"></div>
+                <div id="playlist-container" class="space-y-2 pb-20"></div>
             </div>
 
             <!-- Favorites Tab Content -->
             <div id="favorites-tab" class="tab-content hidden">
-                <div id="favorites-container" class="space-y-2">
-                    <div class="empty-state">
-                        <i class="fas fa-heart"></i>
-                        <p>No favorites yet</p>
-                        <p class="text-sm mt-2">Click the heart icon on any track to add it to your favorites</p>
+                <div id="favorites-container" class="space-y-2 pb-20">
+                    <div class="empty-state py-12 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-heart text-3xl opacity-50"></i>
+                        </div>
+                        <p class="font-medium text-lg">No favorites yet</p>
+                        <p class="text-sm text-gray-500 mt-2">Like songs to see them here</p>
                     </div>
                 </div>
             </div>
 
             <!-- Playlists Tab Content -->
             <div id="playlists-tab" class="tab-content hidden">
-                <button id="create-playlist-btn" class="create-playlist-btn">
-                    <i class="fas fa-plus"></i> Create New Playlist
-                </button>
-                <div id="playlists-container" class="space-y-2">
-                    <div class="empty-state">
-                        <i class="fas fa-list"></i>
-                        <p>No playlists yet</p>
-                        <p class="text-sm mt-2">Create a new playlist to organize your favorite tracks</p>
+                <button id="create-playlist-btn" class="create-playlist-btn w-full mb-6 btn-primary py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+                        <i class="fas fa-plus"></i> New Playlist
+                    </button>
+                <div id="playlists-container" class="space-y-3 pb-20">
+                    <div class="empty-state py-12 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-list-music text-3xl opacity-50"></i>
+                        </div>
+                        <p class="font-medium text-lg">Your library is empty
+                        </p>
+                        <p class="text-sm text-gray-500 mt-2">Create playlists to organize your vibe</p>
                     </div>
                 </div>
             </div>
 
             <!-- History Tab Content -->
             <div id="history-tab" class="tab-content hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold">Recently Played</h2>
-                    <button id="clear-playback-history" class="text-sm" style="color: var(--hint-color);">Clear
-                        History</button>
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h2 class="text-lg font-bold">Recently Played</h2>
+                    <button id="clear-playback-history" class="text-xs bg-white/10 hover:bg-white/20 px-3 py-1 rounded-full transition-colors">Clear</button>
                 </div>
-                <div id="history-tracks-container" class="space-y-2">
-                    <div class="empty-state">
-                        <i class="fas fa-history"></i>
-                        <p>No playback history yet</p>
-                        <p class="text-sm mt-2">Your recently played tracks will appear here</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <!-- Footer -->
-        <footer class="mt-8 mb-4 text-center text-sm" style="color: var(--hint-color);">
-            <p class="mb-2">Created with ❤️ by YEBEKHE</p>
-            <div class="flex justify-center gap-4">
-                <a href="https://t.me/yebekhe" target="_blank" class="hover:text-white transition-colors"
-                    title="Telegram">
-                    <i class="fab fa-telegram text-xl"></i>
-                </a>
-                <a href="https://twitter.com/yebekhe" target="_blank" class="hover:text-white transition-colors"
-                    title="X (Twitter)">
-                    <i class="fab fa-twitter text-xl"></i>
-                </a>
-                <a href="https://github.com/itsyebekhe/soundcloud/" target="_blank"
-                    class="hover:text-white transition-colors" title="GitHub">
-                    <i class="fab fa-github text-xl"></i>
-                </a>
-            </div>
-        </footer>
-    </div>
-
-    <!-- Player starts here, initially hidden -->
-    <div id="persistent-player-container">
-        <!-- Minimized Player View -->
-        <div id="minimized-player" class="p-3 cursor-pointer" style="border-top: 1px solid rgba(255,255,255,0.1);">
-            <div class="max-w-2xl mx-auto flex items-center gap-3">
-                <div class="relative">
-                    <img id="player-thumb-mini" class="w-12 h-12 rounded-md shadow-lg bg-gray-700">
-                    <div id="player-loading-indicator"
-                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md hidden">
-                        <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
-                    </div>
-                </div>
-                <div class="flex-grow min-w-0">
-                    <p id="player-title-mini" class="font-bold text-sm truncate"></p>
-                    <p id="player-performer-mini" class="text-xs truncate" style="color: var(--hint-color);"></p>
-                </div>
-                <div class="flex items-center gap-4 text-xl">
-                    <button id="player-favorite-btn-mini" class="favorite-btn p-2 tooltip" data-tooltip="Favorite">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <button id="player-play-pause-btn-mini" class="p-2"></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Expanded Player View -->
-        <div id="expanded-player"
-            class="p-4 max-w-2xl mx-auto w-full h-full flex flex-col justify-between items-center">
-            <button id="minimize-btn" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-white"><i
-                    class="fas fa-chevron-down text-xl"></i></button>
-            <div class="w-full flex mb-4 border-b border-white/10">
-                <button class="tab-button flex-1 py-3 text-center font-medium active" data-tab="now-playing">Now
-                    Playing</button>
-                <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="queue">Queue</button>
-                <button class="tab-button flex-1 py-3 text-center font-medium" data-tab="settings">Settings</button>
-            </div>
-
-            <!-- Now Playing Content -->
-            <div id="now-playing-tab" class="tab-content w-full flex flex-col items-center justify-center flex-grow">
-                <div class="relative mb-8">
-                    <img id="player-thumb-expanded" class="w-64 h-64 mx-auto rounded-2xl shadow-2xl bg-gray-800">
-                    <div id="player-loading-indicator-expanded"
-                        class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-2xl hidden">
-                        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-                    </div>
-                </div>
-                <div class="w-full text-center mb-6">
-                    <h2 id="player-title-expanded" class="text-2xl font-bold truncate"></h2>
-                    <p id="player-performer-expanded" class="text-lg mt-1" style="color: var(--hint-color);"></p>
-                </div>
-                <div class="flex gap-4 mt-2">
-                    <button id="player-favorite-btn-expanded" class="favorite-btn p-3 text-2xl tooltip"
-                        data-tooltip="Favorite">
-                        <i class="far fa-heart"></i>
-                    </button>
-                    <button id="player-share-btn" class="p-3 text-2xl tooltip" data-tooltip="Share">
-                        <i class="fas fa-share-alt"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Queue Content -->
-            <div id="queue-tab" class="tab-content w-full hidden flex-grow overflow-y-auto">
-                <div id="player-queue-container" class="space-y-2 pr-2"></div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div id="settings-tab" class="tab-content w-full hidden flex-grow overflow-y-auto">
-                <div class="space-y-6">
-                    <div class="settings-section">
-                        <h3 class="settings-title">Playback Settings</h3>
-                        <div class="settings-control">
-                            <span class="settings-label">Crossfade</span>
-                            <div class="settings-value">
-                                <input type="range" id="crossfade-slider" class="volume-slider" min="0" max="10"
-                                    value="0" step="0.5">
-                                <span id="crossfade-value">0s</span>
-                            </div>
+                <div id="history-tracks-container" class="space-y-2 pb-20">
+                    <div class="empty-state py-12 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-history text-3xl opacity-50"></i>
                         </div>
-                        <div class="settings-control">
-                            <span class="settings-label">Gapless Playback</span>
-                            <div class="settings-value">
-                                <label class="switch">
-                                    <input type="checkbox" id="gapless-playback">
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3 class="settings-title">Sleep Timer</h3>
-                        <div class="flex items-center gap-3">
-                            <select id="sleep-timer-select" class="form-select p-2 rounded-lg flex-grow">
-                                <option value="0">Off</option>
-                                <option value="300">5 minutes</option>
-                                <option value="600">10 minutes</option>
-                                <option value="900">15 minutes</option>
-                                <option value="1800">30 minutes</option>
-                                <option value="3600">1 hour</option>
-                            </select>
-                            <button id="start-sleep-timer" class="btn-primary p-2 rounded-lg">Start</button>
-                        </div>
-                        <div id="sleep-timer-status" class="mt-2 text-sm" style="color: var(--hint-color);"></div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3 class="settings-title">Keyboard Shortcuts</h3>
-                        <div class="space-y-2 text-sm" style="color: var(--hint-color);">
-                            <div class="flex justify-between">
-                                <span>Play/Pause</span>
-                                <span>Space</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Next Track</span>
-                                <span>→</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Previous Track</span>
-                                <span>←</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Increase Volume</span>
-                                <span>↑</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Decrease Volume</span>
-                                <span>↓</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Toggle Shuffle</span>
-                                <span>S</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Toggle Repeat</span>
-                                <span>R</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="settings-section">
-                        <h3 class="settings-title">About</h3>
-                        <p class="text-sm" style="color: var(--hint-color);">
-                            SoundCloud Web Player v1.3<br>
-                            This player uses the SoundCloud API to stream music.<br>
-                            No tracks are stored on our servers.
+                        <p class="font-medium text-lg">No playback history
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- All Player Controls grouped at the bottom -->
-            <div class="w-full mt-auto">
-                <div class="w-full mt-4">
-                    <div id="progress-container" class="progress-bar-container w-full mb-1">
-                        <div id="player-progress-bar" class="progress-bar-filled"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 mb-4 text-center text-sm text-gray-500 relative z-10">
+            <div class="flex justify-center gap-6 mb-4">
+                <a href="https://t.me/yebekhe" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all transform hover:-translate-y-1">
+                    <i class="fab fa-telegram-plane text-lg"></i>
+                </a>
+                <a href="https://twitter.com/yebekhe" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-black hover:text-white transition-all transform hover:-translate-y-1">
+                    <i class="fab fa-x-twitter text-lg"></i>
+                </a>
+                <a href="https://github.com/itsyebekhe/soundcloud/" target="_blank" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-purple-600 hover:text-white transition-all transform hover:-translate-y-1">
+                    <i class="fab fa-github text-lg"></i>
+                </a>
+            </div>
+            <p class="opacity-60">Designed with ❤️ • YEBEKHE</p>
+        </footer>
+    </div>
+
+    <!-- Player Container - Floating Glass Bar Style -->
+    <div id="persistent-player-container">
+        <!-- Minimized Player View -->
+        <div id="minimized-player" class="cursor-pointer relative overflow-hidden group">
+            <!-- Progress bar overlay on bottom of mini player -->
+            <div class="absolute bottom-0 left-0 w-full h-[2px] bg-white/10">
+                <div id="mini-progress-bar" class="h-full bg-purple-500 w-0"></div>
+                <!-- Requires JS hook or reuse main progress bar logic visually -->
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="relative group-hover:scale-105 transition-transform duration-300">
+                    <img id="player-thumb-mini" class="w-12 h-12 rounded-lg shadow-lg object-cover bg-gray-800">
+                    <div id="player-loading-indicator" class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg hidden backdrop-blur-sm">
+                        <div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
                     </div>
-                    <div class="flex justify-between text-xs font-mono" style="color: var(--hint-color);">
+                </div>
+                <div class="flex-grow min-w-0 flex flex-col justify-center">
+                    <p id="player-title-mini" class="font-bold text-sm truncate text-white leading-tight"></p>
+                    <p id="player-performer-mini" class="text-xs truncate text-gray-400 mt-0.5"></p>
+                </div>
+                <div class="flex items-center gap-3 text-lg pr-1">
+                    <button id="player-favorite-btn-mini" class="favorite-btn w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors tooltip" data-tooltip="Favorite">
+                            <i class="far fa-heart text-sm"></i>
+                        </button>
+                    <button id="player-play-pause-btn-mini" class="w-10 h-10 flex items-center justify-center bg-white text-black rounded-full hover:scale-105 transition-transform shadow-lg"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expanded Player View -->
+        <div id="expanded-player" class="p-6 pt-12 max-w-2xl mx-auto w-full h-full flex flex-col relative">
+
+            <!-- Drag Indicator for mobile feel -->
+            <div class="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-white/20 rounded-full"></div>
+
+            <button id="minimize-btn" class="absolute top-6 left-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors z-20">
+                    <i class="fas fa-chevron-down text-white"></i>
+                </button>
+
+            <div class="w-full flex justify-center mb-6 px-12">
+                <div class="flex bg-black/20 p-1 rounded-xl backdrop-blur-sm">
+                    <button class="tab-button px-4 py-1.5 text-sm rounded-lg active" data-tab="now-playing">Playing</button>
+                    <button class="tab-button px-4 py-1.5 text-sm rounded-lg" data-tab="queue">Queue</button>
+                    <button class="tab-button px-4 py-1.5 text-sm rounded-lg" data-tab="settings">Config</button>
+                </div>
+            </div>
+
+            <!-- Now Playing Content -->
+            <div id="now-playing-tab" class="tab-content w-full flex flex-col items-center justify-center flex-grow h-full">
+                <div class="relative mb-8 w-full max-w-[320px] aspect-square">
+                    <img id="player-thumb-expanded" class="w-full h-full object-cover rounded-3xl bg-gray-800 ring-1 ring-white/10">
+                    <div id="player-loading-indicator-expanded" class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-3xl hidden backdrop-blur-md">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+                    </div>
+                </div>
+
+                <div class="w-full mb-8 px-4 flex items-end justify-between">
+                    <div class="flex-1 min-w-0 pr-4">
+                        <h2 id="player-title-expanded" class="text-2xl font-bold truncate text-white leading-tight"></h2>
+                        <p id="player-performer-expanded" class="text-lg text-gray-400 mt-1 truncate font-medium"></p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="player-favorite-btn-expanded" class="favorite-btn w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-xl tooltip" data-tooltip="Favorite">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        <button id="player-share-btn" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 text-xl tooltip" data-tooltip="Share">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                    </div>
+                </div>
+
+                <!-- Progress & Time -->
+                <div class="w-full px-4 mb-6">
+                    <div id="progress-container" class="progress-bar-container w-full mb-2 cursor-pointer group">
+                        <div id="player-progress-bar" class="progress-bar-filled w-0"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-mono text-gray-400 font-medium">
                         <span id="player-current-time">0:00</span>
                         <span id="player-total-duration">0:00</span>
                     </div>
                 </div>
-                <div class="player-controls flex items-center justify-around mt-4 w-full text-gray-300">
-                    <button id="player-shuffle-btn" class="shuffle-btn p-3 tooltip" data-tooltip="Shuffle"><i
-                            class="fas fa-random text-lg"></i></button>
-                    <button id="player-prev-btn" class="p-3 tooltip" data-tooltip="Previous"><i
-                            class="fas fa-step-backward text-2xl"></i></button>
-                    <button id="player-play-pause-btn-expanded"
-                        class="p-5 w-16 h-16 rounded-full btn-primary text-2xl flex items-center justify-center"
-                        title="Play/Pause"></button>
-                    <button id="player-next-btn" class="p-3 tooltip" data-tooltip="Next"><i
-                            class="fas fa-step-forward text-2xl"></i></button>
-                    <button id="player-repeat-btn" class="repeat-btn p-3 tooltip" data-tooltip="Repeat"><i
-                            class="fas fa-redo text-lg"></i></button>
+
+                <!-- Main Controls -->
+                <div class="player-controls flex items-center justify-between w-full max-w-xs mb-8">
+                    <button id="player-shuffle-btn" class="shuffle-btn text-gray-400 hover:text-white transition-colors"><i
+                                class="fas fa-random text-xl"></i></button>
+
+                    <button id="player-prev-btn" class="text-white hover:text-purple-400 transition-colors"><i
+                                class="fas fa-backward-step text-3xl"></i></button>
+
+                    <button id="player-play-pause-btn-expanded" class="w-20 h-20 rounded-full flex items-center justify-center text-3xl transform transition-transform hover:scale-105 active:scale-95" title="Play/Pause"></button>
+
+                    <button id="player-next-btn" class="text-white hover:text-purple-400 transition-colors"><i
+                                class="fas fa-forward-step text-3xl"></i></button>
+
+                    <button id="player-repeat-btn" class="repeat-btn text-gray-400 hover:text-white transition-colors"><i
+                                class="fas fa-redo text-xl"></i></button>
                 </div>
-                <div class="flex items-center justify-between mt-4 text-lg text-gray-400">
-                    <i class="fas fa-volume-down"></i>
-                    <input type="range" id="player-volume-slider" class="volume-slider" min="0" max="100" value="100">
-                    <i class="fas fa-volume-up"></i>
+
+                <!-- Volume -->
+                <div class="flex items-center gap-4 w-full max-w-xs px-4">
+                    <i class="fas fa-volume-low text-xs text-gray-500"></i>
+                    <input type="range" id="player-volume-slider" class="volume-slider flex-grow" min="0" max="100" value="100">
+                    <i class="fas fa-volume-high text-xs text-gray-500"></i>
+                </div>
+            </div>
+
+            <!-- Queue Content -->
+            <div id="queue-tab" class="tab-content w-full hidden flex-grow overflow-y-auto px-2">
+                <div id="player-queue-container" class="space-y-2 pb-6"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content w-full hidden flex-grow overflow-y-auto px-4">
+                <div class="space-y-6 pt-2">
+                    <div class="glass-panel p-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Playback</h3>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-medium">Crossfade</span>
+                            <div class="flex items-center gap-3">
+                                <input type="range" id="crossfade-slider" class="volume-slider w-24" min="0" max="10" value="0" step="0.5">
+                                <span id="crossfade-value" class="text-sm font-mono w-8 text-right">0s</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Gapless
+                                    Playback</span>
+                            <label class="switch">
+                                    <input type="checkbox"
+                                        id="gapless-playback">
+                                    <span class="slider"></span>
+                                </label>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel p-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Timer</h3>
+                        <div class="flex items-center gap-3">
+                            <select id="sleep-timer-select" class="form-select flex-grow p-3 rounded-xl border-none">
+                                    <option value="0">Timer Off</option>
+                                    <option value="300">5 minutes</option>
+                                    <option value="600">10 minutes</option>
+                                    <option value="900">15 minutes</option>
+                                    <option value="1800">30 minutes</option>
+                                    <option value="3600">1 hour</option>
+                                </select>
+                            <button id="start-sleep-timer" class="btn-primary py-3 px-6 rounded-xl font-bold">Set</button>
+                        </div>
+                        <div id="sleep-timer-status" class="mt-2 text-sm text-purple-400 font-medium text-center"></div>
+                    </div>
+
+                    <div class="glass-panel p-4">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Shortcuts</h3>
+                        <div class="grid grid-cols-2 gap-y-2 text-sm text-gray-400">
+                            <div class="flex justify-between pr-2"><span>Play/Pause</span>
+                                <kbd class="bg-white/10 px-2 rounded">Space</kbd></div>
+                            <div class="flex justify-between pr-2"><span>Next</span>
+                                <kbd class="bg-white/10 px-2 rounded">→</kbd></div>
+                            <div class="flex justify-between pr-2"><span>Prev</span>
+                                <kbd class="bg-white/10 px-2 rounded">←</kbd></div>
+                            <div class="flex justify-between pr-2"><span>Vol
+                                        Up</span> <kbd class="bg-white/10 px-2 rounded">↑</kbd></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast"
-        class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-xl border border-white/10 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-[200] flex items-center gap-3 font-medium translate-y-[-20px]">
     </div>
 
     <!-- Create Playlist Modal -->
-    <div id="create-playlist-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Create New Playlist</h2>
-                <button class="modal-close" id="close-create-playlist-modal">&times;</button>
+    <div id="create-playlist-modal" class="modal fixed inset-0 flex items-center justify-center p-4">
+        <div class="modal-content w-full max-w-md p-6 relative">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold">New Playlist</h2>
+                <button class="modal-close w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors" id="close-create-playlist-modal">&times;</button>
             </div>
-            <div class="form-group">
-                <label class="form-label" for="playlist-name">Playlist Name</label>
-                <input type="text" id="playlist-name" class="form-input" placeholder="My Awesome Playlist">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium" for="playlist-name">Name</label>
+                    <input type="text" id="playlist-name" class="form-input w-full p-3 rounded-xl focus:outline-none" placeholder="My Awesome Mix">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2 font-medium" for="playlist-description">Description</label>
+                    <textarea id="playlist-description" class="form-input w-full p-3 rounded-xl focus:outline-none" rows="3" placeholder="Vibes for late night coding..."></textarea>
+                </div>
             </div>
-            <div class="form-group">
-                <label class="form-label" for="playlist-description">Description (Optional)</label>
-                <textarea id="playlist-description" class="form-input" rows="3"
-                    placeholder="Describe your playlist..."></textarea>
-            </div>
-            <div class="form-actions">
-                <button class="btn btn-secondary" id="cancel-create-playlist">Cancel</button>
-                <button class="btn btn-primary" id="confirm-create-playlist">Create</button>
+            <div class="flex gap-3 mt-8">
+                <button class="btn-secondary flex-1 py-3 rounded-xl font-medium" id="cancel-create-playlist">Cancel</button>
+                <button class="btn-primary flex-1 py-3 rounded-xl font-bold" id="confirm-create-playlist">Create</button>
             </div>
         </div>
     </div>
 
     <!-- Add to Playlist Modal -->
-    <div id="add-to-playlist-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Add to Playlist</h2>
-                <button class="modal-close" id="close-add-to-playlist-modal">&times;</button>
+    <div id="add-to-playlist-modal" class="modal fixed inset-0 flex items-center justify-center p-4">
+        <div class="modal-content w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold">Add to Playlist</h2>
+                <button class="modal-close w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center" id="close-add-to-playlist-modal">&times;</button>
             </div>
-            <div id="playlist-options-container" class="space-y-2">
+            <div id="playlist-options-container" class="space-y-2 max-h-[300px] overflow-y-auto custom-scrollbar my-4">
                 <!-- Playlist options will be dynamically added here -->
             </div>
-            <div class="form-actions">
-                <button class="btn btn-secondary" id="cancel-add-to-playlist">Cancel</button>
+            <div class="mt-4">
+                <button class="btn-secondary w-full py-3 rounded-xl font-medium" id="cancel-add-to-playlist">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- Context Menu -->
-    <div id="context-menu" class="context-menu hidden">
-        <div class="context-menu-item" id="ctx-play-next">
-            <i class="fas fa-play"></i> Play Next
+    <div id="context-menu" class="context-menu hidden absolute z-[200] min-w-[200px]">
+        <div class="context-menu-item p-3 flex items-center gap-3 cursor-pointer" id="ctx-play-next">
+            <i class="fas fa-forward-step w-5 text-center text-gray-400"></i>
+            <span class="font-medium">Play Next</span>
         </div>
-        <div class="context-menu-item" id="ctx-play-later">
-            <i class="fas fa-plus"></i> Add to Queue
+        <div class="context-menu-item p-3 flex items-center gap-3 cursor-pointer" id="ctx-play-later">
+            <i class="fas fa-clock w-5 text-center text-gray-400"></i> <span class="font-medium">Play Later</span>
         </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" id="ctx-add-to-playlist">
-            <i class="fas fa-plus"></i> Add to Playlist
+        <div class="h-px bg-white/10 my-1 mx-2"></div>
+        <div class="context-menu-item p-3 flex items-center gap-3 cursor-pointer" id="ctx-add-to-playlist">
+            <i class="fas fa-plus-square w-5 text-center text-gray-400"></i>
+            <span class="font-medium">Add to Playlist</span>
         </div>
-        <div class="context-menu-item" id="ctx-toggle-favorite">
-            <i class="far fa-heart"></i> Add to Favorites
+        <div class="context-menu-item p-3 flex items-center gap-3 cursor-pointer" id="ctx-toggle-favorite">
+            <i class="far fa-heart w-5 text-center text-gray-400"></i> <span class="font-medium">Favorite</span>
         </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" id="ctx-download">
-            <i class="fas fa-download"></i> Download
+        <div class="h-px bg-white/10 my-1 mx-2"></div>
+        <div class="context-menu-item p-3 flex items-center gap-3 cursor-pointer hover:text-green-400" id="ctx-download">
+            <i class="fas fa-download w-5 text-center text-gray-400"></i>
+            <span class="font-medium">Download</span>
         </div>
     </div>
 
     <audio id="audio-element" class="hidden" preload="metadata"></audio>
 
+    <!-- Original Javascript Logic -->
     <script>
         // --- Configuration & Global State ---
+        // --- Advanced Preloading System ---
+        const audioCache = new Map(); // Stores track_url -> Blob URL mapping
+        const MAX_CACHE_SIZE = 5; // Keep last 5 songs in memory to save RAM
+
+        async function preloadTrack(track) {
+            if (!track || audioCache.has(track.track_url)) return;
+
+            try {
+                console.log(`Preloading: ${track.title}`);
+
+                // Fetch the audio file as a binary blob
+                const response = await fetch(`${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+
+                // Store in Cache
+                audioCache.set(track.track_url, objectUrl);
+
+                // Update UI to show it's cached (Optional visual feedback)
+                updateQueueCacheStatus(track.track_url);
+
+                // Manage Memory: Remove old tracks if cache gets too big
+                if (audioCache.size > MAX_CACHE_SIZE) {
+                    const firstKey = audioCache.keys().next().value;
+                    URL.revokeObjectURL(audioCache.get(firstKey)); // Free up memory
+                    audioCache.delete(firstKey);
+                }
+            } catch (error) {
+                console.error('Preload failed:', error);
+            }
+        }
+
+        // Helper to visually mark tracks as "Ready" in the queue
+        function updateQueueCacheStatus(trackUrl) {
+            const queueItems = document.querySelectorAll('.queue-item');
+            queueItems.forEach(item => {
+                // This relies on you adding data-url to queue items in Step 3
+                if (item.dataset.trackUrl === trackUrl) {
+                    const statusDiv = item.querySelector('.queue-status');
+                    if (statusDiv) {
+                        statusDiv.innerHTML = '<i class="fas fa-bolt text-yellow-400" title="Instant Play"></i>';
+                    }
+                }
+            });
+        }
         const API_BASE_URL = 'https://scdlapi.yebekhe.workers.dev';
         let currentPlaylist = [];
         let originalPlaylist = []; // To restore from shuffle
@@ -1048,12 +956,14 @@
         // --- Utility Functions ---
         const showToast = (message, duration = 3000) => {
             const toast = G('toast');
-            toast.textContent = message;
+            toast.innerHTML = `<i class="fas fa-info-circle text-purple-400"></i> ${message}`;
             toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
             toast.style.pointerEvents = 'auto';
 
             setTimeout(() => {
                 toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -20px)';
                 toast.style.pointerEvents = 'none';
             }, duration);
         };
@@ -1062,22 +972,10 @@
 
         const updateSearchHistory = (url) => {
             if (!url) return;
-
-            // Remove if already exists
             searchHistory = searchHistory.filter(item => item !== url);
-
-            // Add to beginning
             searchHistory.unshift(url);
-
-            // Keep only last 5
-            if (searchHistory.length > 5) {
-                searchHistory = searchHistory.slice(0, 5);
-            }
-
-            // Save to localStorage
+            if (searchHistory.length > 5) searchHistory = searchHistory.slice(0, 5);
             localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-
-            // Update UI
             renderSearchHistory();
         };
 
@@ -1095,9 +993,8 @@
 
             searchHistory.forEach(url => {
                 const item = document.createElement('div');
-                item.className = 'history-item px-3 py-1 rounded-lg text-sm cursor-pointer';
-                item.style.backgroundColor = 'var(--secondary-bg-color)';
-                item.textContent = url.length > 30 ? url.substring(0, 30) + '...' : url;
+                item.className = 'px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-sm cursor-pointer transition-colors text-gray-300 truncate max-w-[200px]';
+                item.textContent = url.replace('https://soundcloud.com/', '');
                 item.addEventListener('click', () => {
                     G('sc-url-input').value = url;
                     handleFetch();
@@ -1108,27 +1005,14 @@
 
         // --- Playback History Management ---
         const addToPlaybackHistory = (track) => {
-            // Remove if already exists
             playbackHistory = playbackHistory.filter(item => item.track_url !== track.track_url);
-
-            // Add to beginning
             playbackHistory.unshift({
                 ...track,
                 playedAt: new Date().toISOString()
             });
-
-            // Keep only last 50
-            if (playbackHistory.length > 50) {
-                playbackHistory = playbackHistory.slice(0, 50);
-            }
-
-            // Save to localStorage
+            if (playbackHistory.length > 50) playbackHistory = playbackHistory.slice(0, 50);
             localStorage.setItem('playbackHistory', JSON.stringify(playbackHistory));
-
-            // Update UI if history tab is visible
-            if (!G('history-tab').classList.contains('hidden')) {
-                renderPlaybackHistory();
-            }
+            if (!G('history-tab').classList.contains('hidden')) renderPlaybackHistory();
         };
 
         const renderPlaybackHistory = () => {
@@ -1137,46 +1021,48 @@
 
             if (playbackHistory.length === 0) {
                 container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-history"></i>
-                <p>No playback history yet</p>
-                <p class="text-sm mt-2">Your recently played tracks will appear here</p>
-            </div>
-        `;
+                    <div class="empty-state py-12 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-history text-3xl opacity-50"></i>
+                        </div>
+                        <p class="font-medium text-lg">No playback history</p>
+                    </div>
+                `;
                 return;
             }
 
             playbackHistory.forEach((track, index) => {
                 const isFavorite = favoriteTracks.includes(track.track_url);
                 const el = document.createElement('div');
-                el.className = 'history-track-item p-3 rounded-lg flex items-center gap-4';
+                el.className = 'history-track-item p-3 flex items-center gap-4 group';
                 el.innerHTML = `
             <div class="flex-shrink-0 relative">
-                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-play"></i>
+                <img src="${track.thumb || ''}" class="w-12 h-12 rounded-lg bg-gray-800 object-cover">
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                    <i class="fas fa-play text-sm"></i>
                 </div>
             </div>
             <div class="flex-grow min-w-0">
-                <p class="font-semibold truncate">${track.title}</p>
-                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
-                <p class="text-xs" style="color: var(--hint-color);">${formatPlayedDate(track.playedAt)}</p>
+                <p class="font-semibold truncate text-white">${track.title}</p>
+                <div class="flex items-center gap-2 text-xs text-gray-400">
+                    <span class="truncate max-w-[150px]">${track.performer}</span>
+                    <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+                    <span>${formatPlayedDate(track.playedAt)}</span>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
-                    <i class="fas fa-plus-circle"></i>
+            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="add-to-playlist-btn w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white" title="Add to Playlist">
+                    <i class="fas fa-plus"></i>
                 </button>
-                <button class="favorite-btn-history p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                <button class="favorite-btn-history w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}" data-url="${track.track_url}">
                     <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                 </button>
-                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
+                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white">
                     <i class="fas fa-download"></i>
                 </a>
             </div>
         `;
 
-                // Store track data in dataset
                 el.dataset.trackUrl = track.track_url;
                 el.dataset.trackTitle = track.title;
                 el.dataset.trackPerformer = track.performer;
@@ -1184,9 +1070,7 @@
                 el.dataset.trackDuration = track.duration || '';
 
                 el.addEventListener('click', (e) => {
-                    if (e.target.closest('.favorite-btn-history') || e.target.closest('.download-btn')) return;
-
-                    // Get track data from dataset
+                    if (e.target.closest('button') || e.target.closest('a')) return;
                     const trackData = {
                         track_url: el.dataset.trackUrl,
                         title: el.dataset.trackTitle,
@@ -1194,8 +1078,6 @@
                         thumb: el.dataset.trackThumb,
                         duration: parseFloat(el.dataset.trackDuration) || 0
                     };
-
-                    // Create a temporary playlist with just this track
                     currentPlaylist = [trackData];
                     originalPlaylist = [trackData];
                     currentPlaylistSource = 'history';
@@ -1204,7 +1086,6 @@
 
                 el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Get track data from dataset
                     const trackData = {
                         track_url: el.dataset.trackUrl,
                         title: el.dataset.trackTitle,
@@ -1217,7 +1098,6 @@
 
                 el.querySelector('.favorite-btn-history').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Get track data from dataset
                     const trackData = {
                         track_url: el.dataset.trackUrl,
                         title: el.dataset.trackTitle,
@@ -1229,7 +1109,6 @@
                 });
 
                 el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-
                 container.appendChild(el);
             });
         };
@@ -1239,14 +1118,9 @@
             const now = new Date();
             const diffMs = now - date;
             const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-
             if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffMins < 1440) return `${Math.floor(diffMins/60)}h ago`;
             return date.toLocaleDateString();
         };
 
@@ -1266,36 +1140,22 @@
                 tracks: [],
                 createdAt: new Date().toISOString()
             };
-
             playlists.push(newPlaylist);
             localStorage.setItem('playlists', JSON.stringify(playlists));
-
-            // Update UI if playlists tab is visible
-            if (!G('playlists-tab').classList.contains('hidden')) {
-                renderPlaylists();
-            }
-
+            if (!G('playlists-tab').classList.contains('hidden')) renderPlaylists();
             return newPlaylist;
         };
 
         const addTrackToPlaylist = (playlistId, track) => {
             const playlist = playlists.find(p => p.id === playlistId);
             if (!playlist) return false;
-
-            // Check if track already exists in playlist
             if (playlist.tracks.some(t => t.track_url === track.track_url)) {
                 showToast("Track already in playlist");
                 return false;
             }
-
             playlist.tracks.push(track);
             localStorage.setItem('playlists', JSON.stringify(playlists));
-
-            // Update UI if playlists tab is visible
-            if (!G('playlists-tab').classList.contains('hidden')) {
-                renderPlaylists();
-            }
-
+            if (!G('playlists-tab').classList.contains('hidden')) renderPlaylists();
             showToast(`Added to ${playlist.name}`);
             return true;
         };
@@ -1303,93 +1163,83 @@
         const removeTrackFromPlaylist = (playlistId, trackIndex) => {
             const playlist = playlists.find(p => p.id === playlistId);
             if (!playlist || trackIndex < 0 || trackIndex >= playlist.tracks.length) return false;
-
             playlist.tracks.splice(trackIndex, 1);
             localStorage.setItem('playlists', JSON.stringify(playlists));
-
-            // Update UI if playlists tab is visible
-            if (!G('playlists-tab').classList.contains('hidden')) {
-                renderPlaylists();
-            }
-
+            if (!G('playlists-tab').classList.contains('hidden')) renderPlaylists();
             return true;
         };
 
         const deletePlaylist = (playlistId) => {
             playlists = playlists.filter(p => p.id !== playlistId);
             localStorage.setItem('playlists', JSON.stringify(playlists));
-
-            // Update UI if playlists tab is visible
-            if (!G('playlists-tab').classList.contains('hidden')) {
-                renderPlaylists();
-            }
-
+            if (!G('playlists-tab').classList.contains('hidden')) renderPlaylists();
             showToast("Playlist deleted");
         };
 
         const renderPlaylists = () => {
-            const container = G('playlists-container');
-            container.innerHTML = '';
+                const container = G('playlists-container');
+                container.innerHTML = '';
 
-            if (playlists.length === 0) {
-                container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-list"></i>
-                <p>No playlists yet</p>
-                <p class="text-sm mt-2">Create a new playlist to organize your favorite tracks</p>
-            </div>
-        `;
-                return;
-            }
+                if (playlists.length === 0) {
+                    container.innerHTML = `
+                    <div class="empty-state py-12 flex flex-col items-center">
+                        <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-music text-3xl opacity-50"></i>
+                        </div>
+                        <p class="font-medium text-lg">No playlists yet</p>
+                        <p class="text-sm text-gray-500 mt-2">Create a new playlist to get started</p>
+                    </div>
+                `;
+                    return;
+                }
 
-            playlists.forEach(playlist => {
-                const el = document.createElement('div');
-                el.className = 'playlist-item';
-                el.innerHTML = `
-            <div class="playlist-header">
-                <div class="playlist-title">${playlist.name}</div>
-                <div class="playlist-actions">
-                    <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Play" data-playlist-id="${playlist.id}">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Delete" data-playlist-id="${playlist.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                playlists.forEach(playlist => {
+                            const el = document.createElement('div');
+                            el.className = 'glass-panel p-4 hover:bg-white/5 transition-colors cursor-pointer group relative overflow-hidden';
+
+                            // Aesthetic Background Icon
+                            const bgIcon = document.createElement('i');
+                            bgIcon.className = 'fas fa-compact-disc absolute -right-6 -bottom-6 text-9xl text-white/5 transform rotate-12 pointer-events-none group-hover:rotate-45 transition-transform duration-700';
+                            el.appendChild(bgIcon);
+
+                            el.innerHTML += `
+            <div class="relative z-10">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="font-bold text-lg text-white group-hover:text-purple-300 transition-colors">${playlist.name}</div>
+                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="w-8 h-8 rounded-full bg-white/10 hover:bg-purple-600 flex items-center justify-center transition-colors tooltip" data-tooltip="Play" data-playlist-id="${playlist.id}">
+                            <i class="fas fa-play text-xs"></i>
+                        </button>
+                        <button class="w-8 h-8 rounded-full bg-white/10 hover:bg-red-500 flex items-center justify-center transition-colors tooltip" data-tooltip="Delete" data-playlist-id="${playlist.id}">
+                            <i class="fas fa-trash text-xs"></i>
+                        </button>
+                    </div>
                 </div>
+                <div class="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">${playlist.tracks.length} TRACKS</div>
+                ${playlist.description ? `<p class="text-sm text-gray-400 line-clamp-1">${playlist.description}</p>` : ''}
             </div>
-            <div class="playlist-track-count">${playlist.tracks.length} tracks</div>
-            ${playlist.description ? `<p class="text-sm" style="color: var(--hint-color);">${playlist.description}</p>` : ''}
         `;
 
-                // Store playlist data in dataset
                 el.dataset.playlistId = playlist.id;
                 el.dataset.playlistName = playlist.name;
                 el.dataset.playlistDescription = playlist.description || '';
 
-                // Play button
                 el.querySelector('[data-tooltip="Play"]').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const playlistId = e.currentTarget.dataset.playlistId;
-                    playPlaylist(playlistId);
+                    playPlaylist(e.currentTarget.dataset.playlistId);
                 });
 
-                // Delete button
                 el.querySelector('[data-tooltip="Delete"]').addEventListener('click', (e) => {
                     e.stopPropagation();
                     const playlistId = e.currentTarget.dataset.playlistId;
-                    const playlistName = e.currentTarget.closest('.playlist-item').dataset.playlistName;
-                    if (confirm(`Are you sure you want to delete "${playlistName}"?`)) {
-                        deletePlaylist(playlistId);
-                    }
+                    const playlistName = e.currentTarget.closest('.glass-panel').dataset.playlistName;
+                    if (confirm(`Delete "${playlistName}"?`)) deletePlaylist(playlistId);
                 });
 
-                // Click on playlist item to view tracks
                 el.addEventListener('click', (e) => {
                     if (e.target.closest('button')) return;
-                    const playlistId = e.currentTarget.dataset.playlistId;
-                    viewPlaylist(playlistId);
+                    viewPlaylist(e.currentTarget.dataset.playlistId);
                 });
-
                 container.appendChild(el);
             });
         };
@@ -1400,12 +1250,10 @@
                 showToast("Playlist is empty");
                 return;
             }
-
             originalPlaylist = [...playlist.tracks];
             currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
             currentPlaylistSource = 'playlist';
             currentTrackIndex = 0;
-
             playTrack(0);
             showToast(`Playing ${playlist.name}`);
         };
@@ -1416,87 +1264,69 @@
 
             const container = G('playlists-container');
             container.innerHTML = `
-        <div class="flex items-center mb-4">
-            <button id="back-to-playlists" class="p-2 text-gray-400 hover:text-white">
+        <div class="flex items-center gap-3 mb-6">
+            <button id="back-to-playlists" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
                 <i class="fas fa-arrow-left"></i>
             </button>
-            <h2 class="text-lg font-semibold ml-2">${playlist.name}</h2>
+            <div>
+                <h2 class="text-2xl font-bold">${playlist.name}</h2>
+                ${playlist.description ? `<p class="text-sm text-gray-400">${playlist.description}</p>` : ''}
+            </div>
         </div>
-        <div class="mb-4">
-            ${playlist.description ? `<p class="text-sm" style="color: var(--hint-color);">${playlist.description}</p>` : ''}
-        </div>
-        <div class="flex justify-between items-center mb-4">
-            <button class="btn-primary flex items-center gap-2" id="play-playlist-btn" data-playlist-id="${playlist.id}">
+        <div class="flex gap-3 mb-6">
+            <button class="btn-primary flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2" id="play-playlist-btn" data-playlist-id="${playlist.id}">
                 <i class="fas fa-play"></i> Play All
             </button>
-            <button class="btn-secondary flex items-center gap-2" id="shuffle-playlist-btn" data-playlist-id="${playlist.id}">
+            <button class="btn-secondary flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2" id="shuffle-playlist-btn" data-playlist-id="${playlist.id}">
                 <i class="fas fa-random"></i> Shuffle
             </button>
         </div>
         <div class="space-y-2" id="playlist-tracks-container"></div>
     `;
 
-            // Back button
-            G('back-to-playlists').addEventListener('click', () => {
-                renderPlaylists();
-            });
+            G('back-to-playlists').addEventListener('click', renderPlaylists);
+            
+            G('play-playlist-btn').addEventListener('click', (e) => playPlaylist(e.currentTarget.dataset.playlistId));
 
-            // Play button
-            G('play-playlist-btn').addEventListener('click', (e) => {
-                const playlistId = e.currentTarget.dataset.playlistId;
-                playPlaylist(playlistId);
-            });
-
-            // Shuffle button
             G('shuffle-playlist-btn').addEventListener('click', (e) => {
                 const playlistId = e.currentTarget.dataset.playlistId;
-                const playlist = playlists.find(p => p.id === playlistId);
-                if (!playlist || playlist.tracks.length === 0) return;
-
-                originalPlaylist = [...playlist.tracks];
+                const pl = playlists.find(p => p.id === playlistId);
+                if (!pl || pl.tracks.length === 0) return;
+                originalPlaylist = [...pl.tracks];
                 currentPlaylist = shuffleArray([...originalPlaylist]);
                 currentPlaylistSource = 'playlist';
                 currentTrackIndex = 0;
-
                 playTrack(0);
-                showToast(`Shuffling ${playlist.name}`);
+                showToast(`Shuffling ${pl.name}`);
             });
 
-            // Render tracks
             const tracksContainer = G('playlist-tracks-container');
             playlist.tracks.forEach((track, index) => {
                 const isFavorite = favoriteTracks.includes(track.track_url);
                 const el = document.createElement('div');
-                el.className = 'track-item p-3 rounded-lg flex items-center gap-4';
+                el.className = 'track-item p-3 flex items-center gap-3 group';
                 el.innerHTML = `
-            <div class="flex-shrink-0 relative">
-                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-play"></i>
-                </div>
-            </div>
+            <div class="text-gray-500 font-mono text-xs w-6 text-center group-hover:hidden">${index + 1}</div>
+            <div class="hidden group-hover:block w-6 text-center text-white"><i class="fas fa-play text-xs"></i></div>
+            
+            <img src="${track.thumb || ''}" class="w-10 h-10 rounded-lg object-cover bg-gray-800">
+            
             <div class="flex-grow min-w-0">
-                <p class="font-semibold truncate">${track.title}</p>
-                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+                <p class="font-semibold truncate text-white">${track.title}</p>
+                <p class="text-xs text-gray-400 truncate">${track.performer}</p>
             </div>
-            <div class="flex items-center gap-2">
-                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
-                    <i class="fas fa-plus-circle"></i>
+            
+            <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="remove-from-playlist-btn w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-red-500" data-playlist-id="${playlist.id}" data-index="${index}">
+                    <i class="fas fa-minus"></i>
                 </button>
-                <button class="remove-from-playlist-btn p-2 text-gray-400 hover:text-red-500" data-playlist-id="${playlist.id}" data-index="${index}">
-                    <i class="fas fa-times"></i>
-                </button>
-                <button class="favorite-btn-playlist-track p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
+                <button class="favorite-btn-playlist-track w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center ${isFavorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}" data-url="${track.track_url}">
                     <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                 </button>
-                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
-                    <i class="fas fa-download"></i>
-                </a>
             </div>
+            <div class="text-xs text-gray-500 font-mono w-10 text-right">${track.duration ? formatTime(track.duration) : ''}</div>
         `;
 
-                // Store track data in dataset
                 el.dataset.trackUrl = track.track_url;
                 el.dataset.trackTitle = track.title;
                 el.dataset.trackPerformer = track.performer;
@@ -1505,11 +1335,8 @@
                 el.dataset.playlistId = playlist.id;
                 el.dataset.trackIndex = index;
 
-                // Play track
                 el.addEventListener('click', (e) => {
                     if (e.target.closest('button')) return;
-
-                    // Get track data from dataset
                     const trackData = {
                         track_url: el.dataset.trackUrl,
                         title: el.dataset.trackTitle,
@@ -1517,41 +1344,24 @@
                         thumb: el.dataset.trackThumb,
                         duration: parseFloat(el.dataset.trackDuration) || 0
                     };
-
                     originalPlaylist = [...playlist.tracks];
                     currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
-                    const newIndex = currentPlaylist.findIndex(t => t.track_url === trackData.track_url);
                     currentPlaylistSource = 'playlist';
+                    // Find index in possibly shuffled list
+                    const newIndex = currentPlaylist.findIndex(t => t.track_url === trackData.track_url);
                     playTrack(newIndex);
                 });
 
-                // Add to playlist button
-                el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-                    showAddToPlaylistModal(trackData);
-                });
-
-                // Remove from playlist button
                 el.querySelector('.remove-from-playlist-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const playlistId = e.currentTarget.dataset.playlistId;
-                    const index = parseInt(e.currentTarget.dataset.index);
-                    removeTrackFromPlaylist(playlistId, index);
-                    viewPlaylist(playlistId); // Refresh the view
+                    const pid = e.currentTarget.dataset.playlistId;
+                    const idx = parseInt(e.currentTarget.dataset.index);
+                    removeTrackFromPlaylist(pid, idx);
+                    viewPlaylist(pid);
                 });
 
-                // Favorite button
                 el.querySelector('.favorite-btn-playlist-track').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Get track data from dataset
                     const trackData = {
                         track_url: el.dataset.trackUrl,
                         title: el.dataset.trackTitle,
@@ -1562,8 +1372,6 @@
                     toggleFavorite(trackData);
                 });
 
-                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-
                 tracksContainer.appendChild(el);
             });
         };
@@ -1571,36 +1379,24 @@
         // --- Queue Management ---
         const addToQueue = (track, position = 'end') => {
             if (position === 'next') {
-                // Insert after current track
                 queue.splice(currentTrackIndex + 1, 0, track);
             } else {
-                // Add to end of queue
                 queue.push(track);
             }
-
-            // Update current playlist to match the new queue
             currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1).concat(queue);
             originalPlaylist = [...currentPlaylist];
-
-            // Update player's queue display
             renderPlayerQueue();
             showToast(`Added to queue ${position === 'next' ? 'next' : ''}`);
         };
 
         const removeFromQueue = (index) => {
             if (index < 0 || index >= queue.length) return false;
-
-            // Remove from queue
             queue.splice(index, 1);
-
-            // Update current playlist if it's the queue source
             if (currentPlaylistSource === 'queue') {
                 const playlistIndex = index + currentTrackIndex + 1;
                 currentPlaylist.splice(playlistIndex, 1);
                 originalPlaylist = [...currentPlaylist];
             }
-
-            // Update player's queue display
             renderPlayerQueue();
             showToast("Removed from queue");
             return true;
@@ -1608,70 +1404,52 @@
 
         const clearQueue = () => {
             queue = [];
-
-            // Update current playlist to only include tracks up to the current one
             currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1);
             originalPlaylist = [...currentPlaylist];
-
-            // Update player's queue display
             renderPlayerQueue();
             showToast("Queue cleared");
         };
 
         function renderPlayerQueue() {
             const container = G('player-queue-container');
-
             if (!container) return;
-
             container.innerHTML = '';
 
-            // Add queue management buttons
             const queueControls = document.createElement('div');
-            queueControls.className = 'flex justify-between items-center mb-4';
+            queueControls.className = 'flex justify-between items-center mb-4 sticky top-0 bg-[#09090b] py-2 z-10';
             queueControls.innerHTML = `
-        <h3 class="text-lg font-semibold">Queue</h3>
-        <button id="player-clear-queue" class="text-sm" style="color: var(--hint-color);">Clear Queue</button>
-    `;
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500">Up Next</h3>
+                <button id="player-clear-queue" class="text-xs text-purple-400 hover:text-white font-medium">Clear All</button>
+            `;
             container.appendChild(queueControls);
-
-            // Add clear queue button event listener
-            const clearButton = queueControls.querySelector('#player-clear-queue');
-            clearButton.addEventListener('click', () => {
-                if (confirm("Are you sure you want to clear the queue?")) {
-                    clearQueue();
-                }
+            queueControls.querySelector('#player-clear-queue').addEventListener('click', () => {
+                if (confirm("Clear the queue?")) clearQueue();
             });
 
-            // Show currently playing track if available
             if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
                 const currentTrack = currentPlaylist[currentTrackIndex];
                 const currentTrackEl = document.createElement('div');
-                currentTrackEl.className = 'queue-item bg-purple-900/30 border border-purple-500/30';
+                currentTrackEl.className = 'queue-item p-3 border border-purple-500/30 bg-purple-500/10 rounded-xl mb-4 flex items-center gap-3';
                 currentTrackEl.innerHTML = `
-            <div class="queue-item-handle">
-                <i class="fas fa-music text-purple-400"></i>
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-purple-500 text-white animate-pulse">
+                <i class="fas fa-volume-high"></i>
             </div>
-            <div class="queue-item-info">
-                <div class="queue-item-title text-purple-300">${currentTrack.title}</div>
-                <div class="queue-item-artist text-purple-400">${currentTrack.performer}</div>
+            <div class="flex-grow min-w-0">
+                <div class="text-purple-300 font-bold truncate">${currentTrack.title}</div>
+                <div class="text-purple-400/70 text-xs truncate">${currentTrack.performer}</div>
             </div>
-            <div class="queue-item-duration text-purple-400">${currentTrack.duration ? formatTime(currentTrack.duration) : ''}</div>
-            <div class="queue-item-actions">
-                <span class="text-xs text-purple-400 font-medium">NOW PLAYING</span>
-            </div>
+            <div class="text-purple-400 text-xs font-mono">PLAYING</div>
         `;
                 container.appendChild(currentTrackEl);
             }
 
-            // Show upcoming tracks from the queue
             if (queue.length === 0) {
                 container.innerHTML += `
-            <div class="empty-state">
-                <i class="fas fa-check-circle"></i>
-                <p>No more tracks in queue</p>
-                <p class="text-sm mt-2">Add tracks to the queue to see them here</p>
-            </div>
-        `;
+                    <div class="text-center py-8 text-gray-600">
+                        <i class="fas fa-layer-group text-2xl mb-2 opacity-50"></i>
+                        <p class="text-sm">Queue is empty</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -1679,112 +1457,84 @@
             tracksContainer.className = 'space-y-2';
 
             queue.forEach((track, index) => {
-                const isFavorite = favoriteTracks.includes(track.track_url);
                 const el = document.createElement('div');
-                el.className = 'queue-item';
+                el.dataset.trackUrl = track.track_url; 
+                el.className = 'queue-item p-3 flex items-center gap-3 group cursor-grab active:cursor-grabbing';
                 el.draggable = true;
                 el.dataset.index = index;
-                el.innerHTML = `
-    <div class="queue-item-handle">
-        <i class="fas fa-grip-vertical"></i>
-    </div>
-    <div class="queue-item-info">
-        <div class="queue-item-title">${track.title}</div>
-        <div class="queue-item-artist">${track.performer}</div>
-    </div>
-    <div class="queue-item-duration">${track.duration ? formatTime(track.duration) : ''}</div>
-    <div class="queue-item-actions">
-        <button class="p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
-            <i class="fas fa-plus-circle"></i>
-        </button>
-        <button class="p-2 text-gray-400 hover:text-white tooltip" data-tooltip="Remove" data-index="${index}">
+                const isCached = audioCache.has(track.track_url);
+    const cacheIcon = isCached ? '<i class="fas fa-bolt text-yellow-400" title="Instant Play"></i>' : '';
+    el.innerHTML = `
+        <i class="fas fa-grip-lines text-gray-600 mr-1"></i>
+        <div class="flex-grow min-w-0">
+            <div class="text-white font-medium truncate">${track.title}</div>
+            <div class="text-gray-500 text-xs truncate">${track.performer}</div>
+        </div>
+        <!-- Status Icon Container -->
+        <div class="queue-status text-xs mr-2">${cacheIcon}</div>
+        
+        <div class="text-gray-600 text-xs font-mono mr-2">${track.duration ? formatTime(track.duration) : ''}</div>
+        <button class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-colors" data-tooltip="Remove" data-index="${index}">
             <i class="fas fa-times"></i>
         </button>
-    </div>
-`;
+    `;
 
-                // Remove button
                 el.querySelector('[data-tooltip="Remove"]').addEventListener('click', (e) => {
                     e.stopPropagation();
                     removeFromQueue(index);
                 });
 
-                // Drag and drop
+                // Drag Logic (Native HTML5)
                 el.addEventListener('dragstart', (e) => {
                     e.dataTransfer.effectAllowed = 'move';
                     e.dataTransfer.setData('text/plain', index);
                     el.classList.add('dragging');
                 });
-
-                el.querySelector('[data-tooltip="Add to Playlist"]').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showAddToPlaylistModal(track);
-                });
-
-                el.addEventListener('dragend', () => {
-                    el.classList.remove('dragging');
-                });
-
-                el.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                });
-
+                el.addEventListener('dragend', () => el.classList.remove('dragging'));
+                el.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
                 el.addEventListener('drop', (e) => {
                     e.preventDefault();
                     const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
                     const toIndex = parseInt(el.dataset.index);
-
                     if (fromIndex !== toIndex) {
-                        // Reorder the queue
                         const movedTrack = queue.splice(fromIndex, 1)[0];
                         queue.splice(toIndex, 0, movedTrack);
-
-                        // Update current playlist to match the new queue order
                         currentPlaylist = currentPlaylist.slice(0, currentTrackIndex + 1).concat(queue);
                         originalPlaylist = [...currentPlaylist];
-
                         renderPlayerQueue();
                     }
                 });
 
                 tracksContainer.appendChild(el);
             });
-
             container.appendChild(tracksContainer);
         }
 
-        // --- Crossfade and Gapless Playback ---
+        // --- Crossfade and Gapless ---
         const setupCrossfade = () => {
-            if (crossfadeDuration <= 0 || gaplessPlayback) {
-                // No crossfade needed
-                return;
-            }
-
-            // Create a new audio element for crossfading
+            if (crossfadeDuration <= 0 || gaplessPlayback) return;
             const nextAudio = new Audio();
             nextAudio.volume = 0;
-
-            // Set up event listeners for crossfading
             nextAudio.addEventListener('canplay', () => {
                 if (isCrossfading) {
-                    // Start crossfading
                     const fadeInterval = setInterval(() => {
                         if (nextAudio.volume < 1) {
-                            nextAudio.volume += 0.05;
-                            audio.volume -= 0.05;
+                            nextAudio.volume = Math.min(1, nextAudio.volume + 0.05);
+                            audio.volume = Math.max(0, audio.volume - 0.05);
                         } else {
                             clearInterval(fadeInterval);
-                            // Switch to the new audio element
                             audio.pause();
                             audio.src = '';
-                            audio = nextAudio;
+                            // Note: Logic simplification for single file constraint - usually involves swapping audio element references
+                            audio.src = nextAudio.src; 
+                            audio.currentTime = nextAudio.currentTime; 
+                            audio.volume = 1;
+                            audio.play();
                             isCrossfading = false;
                         }
-                    }, crossfadeDuration * 50); // Adjust interval based on crossfade duration
+                    }, crossfadeDuration * 50);
                 }
             });
-
             return nextAudio;
         };
 
@@ -1792,30 +1542,28 @@
         const showContextMenu = (e, track) => {
             e.preventDefault();
             contextMenuTrack = track;
-
             const contextMenu = G('context-menu');
             contextMenu.classList.remove('hidden');
+            
+            // Boundary checks
+            let x = e.clientX;
+            let y = e.clientY;
+            if (x + 200 > window.innerWidth) x = window.innerWidth - 210;
+            if (y + 250 > window.innerHeight) y = window.innerHeight - 260;
 
-            // Position the context menu
-            contextMenu.style.left = `${e.clientX}px`;
-            contextMenu.style.top = `${e.clientY}px`;
+            contextMenu.style.left = `${x}px`;
+            contextMenu.style.top = `${y}px`;
 
-            // Update favorite button text
             const isFavorite = favoriteTracks.includes(track.track_url);
-            const favoriteBtn = G('ctx-toggle-favorite');
-            favoriteBtn.innerHTML = isFavorite ?
-                '<i class="fas fa-heart"></i> Remove from Favorites' :
-                '<i class="far fa-heart"></i> Add to Favorites';
+            G('ctx-toggle-favorite').innerHTML = isFavorite ?
+                '<i class="fas fa-heart w-5 text-center text-red-500"></i> <span class="font-medium text-red-500">Unfavorite</span>' :
+                '<i class="far fa-heart w-5 text-center text-gray-400"></i> <span class="font-medium">Favorite</span>';
 
-            // Hide context menu when clicking outside
             document.addEventListener('click', hideContextMenu, { once: true });
         };
+        const hideContextMenu = () => G('context-menu').classList.add('hidden');
 
-        const hideContextMenu = () => {
-            G('context-menu').classList.add('hidden');
-        };
-
-        // --- API Fetch Logic ---
+        // --- API Fetch ---
         async function handleFetch() {
             const urlInput = G('sc-url-input');
             const fetchBtn = G('fetch-btn');
@@ -1832,15 +1580,13 @@
             playlistContainer.innerHTML = '';
             playlistHeader.classList.add('hidden');
             fetchBtn.disabled = true;
+            fetchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/api/fetch-info?url=${encodeURIComponent(scUrl)}`);
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error || `Request failed with status ${response.status}`);
-                }
+                if (!response.ok) throw new Error((await response.json()).error || 'Request failed');
                 const data = await response.json();
-                lastPlaylistData = data; // Store the playlist data
+                lastPlaylistData = data;
                 renderPlaylist(data);
                 updateSearchHistory(scUrl);
             } catch (err) {
@@ -1849,252 +1595,131 @@
             } finally {
                 loader.classList.add('hidden');
                 fetchBtn.disabled = false;
+                fetchBtn.innerHTML = '<i class="fas fa-arrow-right"></i>';
             }
         }
 
-        // --- UI Rendering ---
+        // --- Render UI ---
         function renderPlaylist(data) {
-            const playlistContainer = G('playlist-container');
-            const playlistHeader = G('playlist-header');
+    const playlistContainer = G('playlist-container');
+    const playlistHeader = G('playlist-header');
+    
+    // --- FIX STARTS HERE ---
+    // Clear the container before adding new items to prevent duplicates
+    playlistContainer.innerHTML = ''; 
+    // --- FIX ENDS HERE ---
 
-            const isSingleTrack = data.type === 'track';
-            const tracks = isSingleTrack ? [data.track] : data.tracks;
-            const title = isSingleTrack ? 'Fetched Track' : data.title;
+    const isSingleTrack = data.type === 'track';
+    const tracks = isSingleTrack ? [data.track] : data.tracks;
+    const title = isSingleTrack ? 'Single Track' : data.title;
 
-            playlistHeader.innerHTML = `
-        <h2 class="text-xl font-bold">${title}</h2>
-        <p class="text-sm" style="color: var(--hint-color);">${tracks.length} tracks</p>
+    playlistHeader.innerHTML = `
+        <div class="flex items-center gap-3 mb-4">
+            <div class="p-3 bg-purple-500/20 rounded-xl text-purple-400"><i class="fas ${isSingleTrack ? 'fa-music' : 'fa-layer-group'} text-xl"></i></div>
+            <div>
+                <h2 class="text-xl font-bold text-white">${title}</h2>
+                <p class="text-sm text-gray-400">${tracks.length} tracks found</p>
+            </div>
+        </div>
     `;
-            playlistHeader.classList.remove('hidden');
+    playlistHeader.classList.remove('hidden');
 
-            tracks.forEach((track, index) => {
-                const isFavorite = favoriteTracks.includes(track.track_url);
-                const el = document.createElement('div');
-                el.className = 'track-item p-3 rounded-lg flex items-center gap-4';
-                el.innerHTML = `
-            <div class="flex-shrink-0 relative">
-                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-play"></i>
-                </div>
-            </div>
-            <div class="flex-grow min-w-0">
-                <p class="font-semibold truncate">${track.title}</p>
-                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <button class="favorite-btn-track p-2 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
-                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
-                </button>
-                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
-                    <i class="fas fa-download"></i>
-                </a>
-            </div>
-        `;
+    tracks.forEach((track, index) => {
+        const isFavorite = favoriteTracks.includes(track.track_url);
+        const el = document.createElement('div');
+        el.className = 'track-item p-3 flex items-center gap-4 group cursor-pointer relative overflow-hidden';
+        el.innerHTML = `
+    <div class="relative w-14 h-14 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+        <img src="${track.thumb || ''}" class="w-full h-full rounded-xl bg-gray-800 object-cover shadow-lg">
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity rounded-xl backdrop-blur-[1px]">
+            <i class="fas fa-play"></i>
+        </div>
+    </div>
+    <div class="flex-grow min-w-0 z-10">
+        <p class="font-bold text-white truncate text-base mb-0.5">${track.title}</p>
+        <p class="text-sm text-gray-400 truncate flex items-center gap-2">
+            <i class="fas fa-user text-[10px]"></i> ${track.performer}
+        </p>
+    </div>
+    <div class="flex items-center gap-2 z-10">
+        <button class="favorite-btn-track w-9 h-9 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center transition-colors ${isFavorite ? 'text-red-500' : 'text-gray-400'}" data-url="${track.track_url}">
+            <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
+        </button>
+        <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download class="download-btn w-9 h-9 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+            <i class="fas fa-download"></i>
+        </a>
+    </div>
+`;
 
-                // Context menu
-                el.addEventListener('contextmenu', (e) => {
-                    showContextMenu(e, track);
-                });
+        el.addEventListener('contextmenu', (e) => showContextMenu(e, track));
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('a')) return;
+            originalPlaylist = [...tracks];
+            currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
+            currentPlaylistSource = 'search';
+            const newIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
+            playTrack(newIndex);
+        });
 
-                el.addEventListener('click', (e) => {
-                    if (e.target.closest('.favorite-btn-track') || e.target.closest('.download-btn')) return;
-
-                    // Set current playlist to the fetched tracks in order
-                    originalPlaylist = [...tracks];
-                    currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
-                    currentPlaylistSource = 'search';
-
-                    // Find the selected track in the (potentially shuffled) playlist
-                    const newIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-                    playTrack(newIndex);
-                });
-
-                el.querySelector('.favorite-btn-track').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleFavorite(track);
-                });
-
-                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-
-                playlistContainer.appendChild(el);
-            });
-        }
-
-        function renderPlaylistTab() {
-            const container = G('playlist-tracks-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            currentPlaylist.forEach((track, index) => {
-                const isFavorite = favoriteTracks.includes(track.track_url);
-                const el = document.createElement('div');
-                el.className = 'playlist-track-item p-2 rounded-lg flex items-center gap-3';
-                el.innerHTML = `
-            <img src="${track.thumb || ''}" class="w-10 h-10 rounded-md flex-shrink-0 bg-gray-700">
-            <div class="flex-grow min-w-0">
-                <p class="font-medium truncate">${track.title}</p>
-                <p class="text-xs truncate" style="color: var(--hint-color);">${track.performer}</p>
-            </div>
-            <div class="flex items-center gap-2">
-                <button class="favorite-btn-playlist p-1 text-gray-400 hover:text-red-500 ${isFavorite ? 'text-red-500' : ''}" data-url="${track.track_url}">
-                    <i class="${isFavorite ? 'fas' : 'far'} fa-heart text-sm"></i>
-                </button>
-                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-            </div>
-        `;
-
-                // Store track data in dataset
-                el.dataset.trackUrl = track.track_url;
-                el.dataset.trackTitle = track.title;
-                el.dataset.trackPerformer = track.performer;
-                el.dataset.trackThumb = track.thumb || '';
-                el.dataset.trackDuration = track.duration || '';
-
-                el.addEventListener('click', () => {
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-                    const newIndex = currentPlaylist.findIndex(t => t.track_url === trackData.track_url);
-                    playTrack(newIndex);
-                });
-
-                el.querySelector('.favorite-btn-playlist').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-                    toggleFavorite(trackData);
-                });
-
-                container.appendChild(el);
-            });
-
-            highlightActiveTrack();
-        }
+        el.querySelector('.favorite-btn-track').addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFavorite(track);
+        });
+        el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
+        playlistContainer.appendChild(el);
+    });
+}
 
         function renderFavoritesTab() {
             const container = G('favorites-container');
             container.innerHTML = '';
-
             if (favoriteTracksData.length === 0) {
-                container.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-heart"></i>
-                <p>No favorites yet</p>
-                <p class="text-sm mt-2">Click the heart icon on any track to add it to your favorites</p>
-            </div>
-        `;
+                container.innerHTML = `<div class="empty-state py-12 flex flex-col items-center"><div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-4"><i class="fas fa-heart text-3xl opacity-50"></i></div><p class="font-medium text-lg">No favorites yet</p></div>`;
                 return;
             }
 
-            // Add "Play All" button
-            const playAllBtn = document.createElement('div');
-            playAllBtn.className = 'play-all-btn flex items-center justify-center gap-2';
+            const playAllBtn = document.createElement('button');
+            playAllBtn.className = 'w-full btn-primary py-3 rounded-xl font-bold flex items-center justify-center gap-2 mb-4';
             playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Favorites';
             playAllBtn.addEventListener('click', playAllFavorites);
             container.appendChild(playAllBtn);
 
             favoriteTracksData.forEach((track, index) => {
                 const el = document.createElement('div');
-                el.className = 'favorite-track-item p-3 rounded-lg flex items-center gap-4';
+                el.className = 'favorite-track-item p-3 flex items-center gap-4 group cursor-pointer';
                 el.innerHTML = `
-            <div class="flex-shrink-0 relative">
-                <img src="${track.thumb || ''}" class="w-14 h-14 rounded-md bg-gray-700">
-                <div class="absolute inset-0 bg-black bg-opacity-25 flex items-center justify-center text-white text-2xl opacity-0 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-play"></i>
-                </div>
-            </div>
+            <img src="${track.thumb || ''}" class="w-12 h-12 rounded-lg bg-gray-800 object-cover">
             <div class="flex-grow min-w-0">
-                <p class="font-semibold truncate">${track.title}</p>
-                <p class="text-sm truncate" style="color: var(--hint-color);">${track.performer}</p>
+                <p class="font-bold text-white truncate">${track.title}</p>
+                <p class="text-sm text-gray-400 truncate">${track.performer}</p>
             </div>
             <div class="flex items-center gap-2">
-                <button class="add-to-playlist-btn p-2 text-gray-400 hover:text-blue-500 tooltip" data-tooltip="Add to Playlist">
-                    <i class="fas fa-plus-circle"></i>
+                 <button class="add-to-playlist-btn w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white" title="Add to Playlist">
+                    <i class="fas fa-plus"></i>
                 </button>
-                <button class="remove-favorite-btn p-2 text-red-500 hover:text-red-400" data-index="${index}">
-                    <i class="fas fa-heart-broken"></i>
+                <button class="remove-favorite-btn w-8 h-8 rounded-full hover:bg-red-500/20 flex items-center justify-center text-red-500" data-index="${index}">
+                    <i class="fas fa-heart-crack"></i>
                 </button>
-                <div class="text-xs" style="color: var(--hint-color);">${track.duration ? formatTime(track.duration) : ''}</div>
-                <a href="${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}" download title="Download" class="download-btn btn-secondary w-10 h-10 text-sm rounded-full flex items-center justify-center hover:bg-gray-600">
-                    <i class="fas fa-download"></i>
-                </a>
             </div>
         `;
-
-                // Store track data in dataset
-                el.dataset.trackUrl = track.track_url;
-                el.dataset.trackTitle = track.title;
-                el.dataset.trackPerformer = track.performer;
-                el.dataset.trackThumb = track.thumb || '';
-                el.dataset.trackDuration = track.duration || '';
-
-                // Context menu
-                el.addEventListener('contextmenu', (e) => {
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-                    showContextMenu(e, trackData);
-                });
-
+                el.addEventListener('contextmenu', (e) => showContextMenu(e, track));
                 el.addEventListener('click', (e) => {
-                    if (e.target.closest('.remove-favorite-btn') || e.target.closest('.download-btn') || e.target.closest('.play-all-btn')) return;
-
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-
-                    // Play all favorites starting from the selected track
+                    if (e.target.closest('button')) return;
                     playFavoritesFromIndex(index);
                 });
-
                 el.querySelector('.add-to-playlist-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // Get track data from dataset
-                    const trackData = {
-                        track_url: el.dataset.trackUrl,
-                        title: el.dataset.trackTitle,
-                        performer: el.dataset.trackPerformer,
-                        thumb: el.dataset.trackThumb,
-                        duration: parseFloat(el.dataset.trackDuration) || 0
-                    };
-                    showAddToPlaylistModal(trackData);
+                    showAddToPlaylistModal(track);
                 });
-
                 el.querySelector('.remove-favorite-btn').addEventListener('click', (e) => {
                     e.stopPropagation();
                     removeFavorite(index);
                 });
-
-                el.querySelector('.download-btn').addEventListener('click', e => e.stopPropagation());
-
                 container.appendChild(el);
             });
         }
 
-        // --- Fisher-Yates shuffle algorithm ---
+        // --- Logic helpers ---
         function shuffleArray(array) {
             const newArray = [...array];
             for (let i = newArray.length - 1; i > 0; i--) {
@@ -2104,101 +1729,112 @@
             return newArray;
         }
 
-        // --- Player Core Logic ---
+        // --- Media Session API ---
+function updateMediaSession(track) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track.title,
+            artist: track.performer,
+            artwork: [
+                { src: track.thumb, sizes: '512x512', type: 'image/jpeg' }
+            ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+            audio.play();
+            setPlayPauseIcons(false);
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audio.pause();
+            setPlayPauseIcons(true);
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+        navigator.mediaSession.setActionHandler('nexttrack', playNext);
+        
+        // Allow seeking via lock screen
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.fastSeek && 'fastSeek' in audio) {
+                audio.fastSeek(details.seekTime);
+                return;
+            }
+            audio.currentTime = details.seekTime;
+        });
+    }
+}
+
+        // --- Player Core ---
         const playTrack = (index) => {
             if (index < 0 || index >= currentPlaylist.length) return;
-
             currentTrackIndex = index;
             const track = currentPlaylist[index];
-            currentTrack = track; // Store current track
-
-            // Add to playback history
+            currentTrack = track;
             addToPlaybackHistory(track);
 
-            // Show loading indicator
             G('player-loading-indicator').classList.remove('hidden');
             G('player-loading-indicator-expanded').classList.remove('hidden');
 
-            // Setup crossfade if needed
-            if (crossfadeDuration > 0 && !gaplessPlayback && !isCrossfading && currentTrackIndex < currentPlaylist.length - 1) {
-                const nextAudio = setupCrossfade();
-                const nextTrack = currentPlaylist[currentTrackIndex + 1];
-                nextAudio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(nextTrack.track_url)}`;
-                nextAudio.load();
-                isCrossfading = true;
-            }
-
-            audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+            // Check if we have the song preloaded in memory
+if (audioCache.has(track.track_url)) {
+    console.log("Playing from instant cache ⚡");
+    audio.src = audioCache.get(track.track_url);
+} else {
+    console.log("Streaming from network 📡");
+    audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+    
+    // Optional: Cache the current song while it streams (so replaying it is instant)
+    preloadTrack(track); 
+}
             audio.load();
 
-            // Update favorite button state
             updateFavoriteButton(track.track_url);
-
-            // Update queue to match the current playlist order
             queue = currentPlaylist.slice(currentTrackIndex + 1);
-
-            // Update player's queue display
             renderPlayerQueue();
-
-            // Update player UI immediately
             updatePlayerUI(track);
 
-            audio.play().catch(e => {
-                console.error("Autoplay was prevented:", e);
-                showToast("Playback was prevented. Please interact with the player first.");
-            });
-
-            // Show player
+            audio.play().catch(e => showToast("Playback restricted. Tap play."));
             G('persistent-player-container').classList.add('show');
             highlightActiveTrack();
-            renderPlaylistTab();
+            
+            // --- NEW: Trigger Preload for Next Track ---
+    // Check if there is a next track in the playlist
+    if (index + 1 < currentPlaylist.length) {
+        const nextTrack = currentPlaylist[index + 1];
+        // Small delay to let the current song start streaming first
+        setTimeout(() => preloadTrack(nextTrack), 1000); 
+    }
+    // Also preload the one after that if on WiFi (optional optimization)
+    if (index + 2 < currentPlaylist.length) {
+        setTimeout(() => preloadTrack(currentPlaylist[index + 2]), 3000); 
+    }
+    updateMediaSession(track);
         };
 
         const playAllFavorites = () => {
-            if (favoriteTracksData.length === 0) {
-                showToast("No favorites to play");
-                return;
-            }
-
-            // Set playlist to all favorites
+            if (favoriteTracksData.length === 0) return;
             originalPlaylist = [...favoriteTracksData];
             currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
             currentPlaylistSource = 'favorites';
             currentTrackIndex = 0;
-
-            // Play the first track
             playTrack(0);
-            showToast("Playing all favorites");
+            showToast("Playing favorites");
         };
 
         const playFavoritesFromIndex = (index) => {
-            if (favoriteTracksData.length === 0 || index < 0 || index >= favoriteTracksData.length) {
-                return;
-            }
-
-            // Set playlist to all favorites
+            if (favoriteTracksData.length === 0) return;
             originalPlaylist = [...favoriteTracksData];
             currentPlaylist = isShuffle ? shuffleArray([...originalPlaylist]) : [...originalPlaylist];
             currentPlaylistSource = 'favorites';
-
-            // Find the selected track in the (potentially shuffled) playlist
             const selectedTrack = favoriteTracksData[index];
             currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === selectedTrack.track_url);
-
-            // Play the selected track
             playTrack(currentTrackIndex);
         };
 
         const playNext = () => {
-            // Check if there are tracks in the current playlist
             if (currentTrackIndex + 1 < currentPlaylist.length) {
-                // Play next track in current playlist
                 playTrack(currentTrackIndex + 1);
             } else if (repeatMode === 'one' && !isDraggingProgress) {
-                audio.currentTime = 0;
-                audio.play();
+                audio.currentTime = 0; audio.play();
             } else if (repeatMode === 'all') {
-                // Start from beginning of current playlist
                 playTrack(0);
             } else {
                 audio.pause();
@@ -2207,846 +1843,325 @@
         };
 
         const playPrev = () => {
-            if (audio.currentTime > 3) {
-                audio.currentTime = 0;
-            } else {
-                let prevIndex;
-                if (isShuffle) {
-                    // Get a random track that's not the current one
-                    do {
-                        prevIndex = Math.floor(Math.random() * currentPlaylist.length);
-                    } while (prevIndex === currentTrackIndex && currentPlaylist.length > 1);
-                } else {
-                    prevIndex = currentTrackIndex - 1;
-                }
-
-                if (prevIndex < 0) {
-                    if (repeatMode === 'all') {
-                        prevIndex = currentPlaylist.length - 1;
-                    } else {
-                        return; // Don't go to negative index
-                    }
-                }
-
-                playTrack(prevIndex);
-            }
+            if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = repeatMode === 'all' ? currentPlaylist.length - 1 : 0;
+            playTrack(prevIndex);
         };
 
-        // --- Player UI Updates ---
         function updatePlayerUI(track) {
             const thumb = track.thumb || '';
-            [G('player-thumb-mini'), G('player-thumb-expanded')].forEach(el => {
-                if (el) el.src = thumb;
-            });
-
-            if (G('player-title-mini')) G('player-title-mini').textContent = track.title;
-            if (G('player-title-expanded')) G('player-title-expanded').textContent = track.title;
-            if (G('player-performer-mini')) G('player-performer-mini').textContent = track.performer;
-            if (G('player-performer-expanded')) G('player-performer-expanded').textContent = track.performer;
+            G('player-thumb-mini').src = thumb;
+            G('player-thumb-expanded').src = thumb;
+            G('player-title-mini').textContent = track.title;
+            G('player-title-expanded').textContent = track.title;
+            G('player-performer-mini').textContent = track.performer;
+            G('player-performer-expanded').textContent = track.performer;
+            
+            // Background blur for expanded player could be updated here if using dynamic colors
         }
 
         function setPlayPauseIcons(paused) {
-            const iconClass = paused ? 'fa-play' : 'fa-pause';
-            if (G('player-play-pause-btn-mini')) {
-                G('player-play-pause-btn-mini').innerHTML = `<i class="fas ${iconClass}"></i>`;
-            }
-            if (G('player-play-pause-btn-expanded')) {
-                G('player-play-pause-btn-expanded').innerHTML = `<i class="fas ${iconClass}"></i>`;
-            }
+            const html = paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+            G('player-play-pause-btn-mini').innerHTML = html;
+            G('player-play-pause-btn-expanded').innerHTML = html;
         }
 
         function highlightActiveTrack() {
-            // Highlight in main list
-            document.querySelectorAll('#playlist-container .track-item').forEach(el => el.classList.remove('active'));
-
-            // Highlight in "Up Next" list
-            document.querySelectorAll('#playlist-tracks-container .playlist-track-item').forEach(el => el.classList.remove('active'));
-
-            // Highlight in favorites list
-            document.querySelectorAll('#favorites-container .favorite-track-item').forEach(el => el.classList.remove('active'));
-
-            // Highlight in history list
-            document.querySelectorAll('#history-tracks-container .history-track-item').forEach(el => el.classList.remove('active'));
-
+            document.querySelectorAll('.track-item, .favorite-track-item, .history-track-item').forEach(el => el.classList.remove('active'));
             if (currentTrackIndex > -1 && currentPlaylist[currentTrackIndex]) {
-                const activeTrackUrl = currentPlaylist[currentTrackIndex].track_url;
-
-                // Find and highlight in main playlist
-                const mainListItems = document.querySelectorAll('#playlist-container .track-item');
-                mainListItems.forEach(item => {
-                    const downloadBtn = item.querySelector('.download-btn');
-                    if (downloadBtn && downloadBtn.href.includes(activeTrackUrl)) {
-                        item.classList.add('active');
-                    }
+                const url = currentPlaylist[currentTrackIndex].track_url;
+                document.querySelectorAll(`[data-url="${url}"]`).forEach(btn => {
+                    const item = btn.closest('.track-item, .favorite-track-item, .history-track-item');
+                    if (item) item.classList.add('active');
                 });
-
-                // Highlight in playlist tab
-                const playlistListItem = document.querySelector(`#playlist-tracks-container .playlist-track-item:nth-child(${currentTrackIndex + 1})`);
-                playlistListItem?.classList.add('active');
-
-                // Highlight in favorites tab if it's a favorite
-                const favoriteIndex = favoriteTracksData.findIndex(t => t.track_url === activeTrackUrl);
-                if (favoriteIndex !== -1) {
-                    const favoriteListItem = document.querySelector(`#favorites-container .favorite-track-item:nth-child(${favoriteIndex + 2})`); // +2 because of the "Play All" button
-                    favoriteListItem?.classList.add('active');
-                }
-
-                // Highlight in history tab if it's in history
-                const historyIndex = playbackHistory.findIndex(t => t.track_url === activeTrackUrl);
-                if (historyIndex !== -1) {
-                    const historyListItem = document.querySelector(`#history-tracks-container .history-track-item:nth-child(${historyIndex + 1})`);
-                    historyListItem?.classList.add('active');
-                }
             }
         }
 
-        // --- Favorite Tracks Management ---
         function toggleFavorite(track) {
             const index = favoriteTracks.indexOf(track.track_url);
-            const data_index = favoriteTracksData.findIndex(t => t.track_url === track.track_url);
-
+            const dataIndex = favoriteTracksData.findIndex(t => t.track_url === track.track_url);
+            
             if (index > -1) {
-                // Remove from favorites
                 favoriteTracks.splice(index, 1);
-                if (data_index > -1) {
-                    favoriteTracksData.splice(data_index, 1);
-                }
+                if (dataIndex > -1) favoriteTracksData.splice(dataIndex, 1);
                 showToast("Removed from favorites");
             } else {
-                // Add to favorites
                 favoriteTracks.push(track.track_url);
                 favoriteTracksData.push(track);
                 showToast("Added to favorites");
             }
-
-            // Save to localStorage
+            
             localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
             localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
-
             updateFavoriteButton(track.track_url);
-
-            // Update all favorite buttons in the main playlist
-            document.querySelectorAll('.favorite-btn-track').forEach(btn => {
+            
+            // Global Update
+            document.querySelectorAll('.favorite-btn-track, .favorite-btn-playlist-track').forEach(btn => {
                 const url = btn.getAttribute('data-url');
                 const isFav = favoriteTracks.includes(url);
                 btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
                 btn.classList.toggle('text-red-500', isFav);
+                btn.classList.toggle('text-gray-400', !isFav);
             });
-
-            // Update all favorite buttons in the playlist tab
-            document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
-                const url = btn.getAttribute('data-url');
-                const isFav = favoriteTracks.includes(url);
-                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
-                btn.classList.toggle('text-red-500', isFav);
-            });
-
-            // Update favorites tab if it's currently visible
-            if (!G('favorites-tab').classList.contains('hidden')) {
-                renderFavoritesTab();
-            }
-
-            // If current playlist is from favorites and we removed a track, update the playlist
-            if (currentPlaylistSource === 'favorites' && index > -1) {
-                // Find the track in the current playlist and remove it
-                const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-                if (playlistIndex !== -1) {
-                    currentPlaylist.splice(playlistIndex, 1);
-                    originalPlaylist.splice(playlistIndex, 1);
-
-                    // Adjust current track index if needed
-                    if (currentTrackIndex > playlistIndex) {
-                        currentTrackIndex--;
-                    } else if (currentTrackIndex === playlistIndex) {
-                        // If we removed the currently playing track, stop playback
-                        if (currentTrackIndex >= currentPlaylist.length) {
-                            currentTrackIndex = currentPlaylist.length - 1;
-                        }
-                        if (currentTrackIndex >= 0) {
-                            playTrack(currentTrackIndex);
-                        } else {
-                            audio.pause();
-                            currentTrack = null;
-                        }
-                    }
-
-                    renderPlaylistTab();
-                }
-            }
+            if (!G('favorites-tab').classList.contains('hidden')) renderFavoritesTab();
         }
 
         function removeFavorite(index) {
             const track = favoriteTracksData[index];
             if (!track) return;
-
-            // Remove from arrays
-            favoriteTracksData.splice(index, 1);
-            const urlIndex = favoriteTracks.indexOf(track.track_url);
-            if (urlIndex > -1) {
-                favoriteTracks.splice(urlIndex, 1);
-            }
-
-            // Save to localStorage
-            localStorage.setItem('favoriteTracks', JSON.stringify(favoriteTracks));
-            localStorage.setItem('favoriteTracksData', JSON.stringify(favoriteTracksData));
-
-            // Update UI
-            updateFavoriteButton(track.track_url);
-            renderFavoritesTab();
-            showToast("Removed from favorites");
-
-            // Update all favorite buttons in the main playlist
-            document.querySelectorAll('.favorite-btn-track').forEach(btn => {
-                const url = btn.getAttribute('data-url');
-                const isFav = favoriteTracks.includes(url);
-                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart"></i>`;
-                btn.classList.toggle('text-red-500', isFav);
-            });
-
-            // Update all favorite buttons in the playlist tab
-            document.querySelectorAll('.favorite-btn-playlist').forEach(btn => {
-                const url = btn.getAttribute('data-url');
-                const isFav = favoriteTracks.includes(url);
-                btn.innerHTML = `<i class="${isFav ? 'fas' : 'far'} fa-heart text-sm"></i>`;
-                btn.classList.toggle('text-red-500', isFav);
-            });
-
-            // If current playlist is from favorites and we removed a track, update the playlist
-            if (currentPlaylistSource === 'favorites') {
-                // Find the track in the current playlist and remove it
-                const playlistIndex = currentPlaylist.findIndex(t => t.track_url === track.track_url);
-                if (playlistIndex !== -1) {
-                    currentPlaylist.splice(playlistIndex, 1);
-                    originalPlaylist.splice(playlistIndex, 1);
-
-                    // Adjust current track index if needed
-                    if (currentTrackIndex > playlistIndex) {
-                        currentTrackIndex--;
-                    } else if (currentTrackIndex === playlistIndex) {
-                        // If we removed the currently playing track, stop playback
-                        if (currentTrackIndex >= currentPlaylist.length) {
-                            currentTrackIndex = currentPlaylist.length - 1;
-                        }
-                        if (currentTrackIndex >= 0) {
-                            playTrack(currentTrackIndex);
-                        } else {
-                            audio.pause();
-                            currentTrack = null;
-                        }
-                    }
-
-                    renderPlaylistTab();
-                }
-            }
+            toggleFavorite(track); // reuse toggle logic
         }
 
         function updateFavoriteButton(trackUrl) {
             const isFavorite = favoriteTracks.includes(trackUrl);
-            const iconClass = isFavorite ? 'fas' : 'far';
-
-            // Update mini player favorite button
-            if (G('player-favorite-btn-mini')) {
-                G('player-favorite-btn-mini').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-                G('player-favorite-btn-mini').classList.toggle('active', isFavorite);
-            }
-
-            // Update expanded player favorite button
-            if (G('player-favorite-btn-expanded')) {
-                G('player-favorite-btn-expanded').innerHTML = `<i class="${iconClass} fa-heart"></i>`;
-                G('player-favorite-btn-expanded').classList.toggle('active', isFavorite);
-            }
+            const html = `<i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>`;
+            const miniBtn = G('player-favorite-btn-mini');
+            const expBtn = G('player-favorite-btn-expanded');
+            
+            if (miniBtn) { miniBtn.innerHTML = html; miniBtn.classList.toggle('text-red-500', isFavorite); }
+            if (expBtn) { expBtn.innerHTML = html; expBtn.classList.toggle('text-red-500', isFavorite); }
         }
 
-        // --- Sleep Timer ---
         function startSleepTimer() {
             const select = G('sleep-timer-select');
             const status = G('sleep-timer-status');
             const seconds = parseInt(select.value);
-
             if (seconds === 0) {
-                if (sleepTimer) {
-                    clearInterval(sleepTimer);
-                    sleepTimer = null;
-                    status.textContent = '';
-                }
+                if (sleepTimer) clearInterval(sleepTimer);
+                status.textContent = '';
                 return;
             }
-
             sleepTimerSeconds = seconds;
-            status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
-
-            if (sleepTimer) {
-                clearInterval(sleepTimer);
-            }
-
+            if (sleepTimer) clearInterval(sleepTimer);
             sleepTimer = setInterval(() => {
                 sleepTimerSeconds--;
-                status.textContent = `Sleep timer: ${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
-
+                status.textContent = `${Math.floor(sleepTimerSeconds / 60)}:${String(sleepTimerSeconds % 60).padStart(2, '0')}`;
                 if (sleepTimerSeconds <= 0) {
                     clearInterval(sleepTimer);
-                    sleepTimer = null;
                     audio.pause();
-                    showToast("Sleep timer: Playback stopped");
-                    status.textContent = '';
+                    showToast("Sleep timer ended");
+                    status.textContent = 'Ended';
                 }
             }, 1000);
-
-            showToast(`Sleep timer set for ${Math.floor(seconds / 60)} minutes`);
+            showToast(`Timer set: ${Math.floor(seconds/60)}m`);
         }
 
-        // --- Event Listeners ---
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize search history
             renderSearchHistory();
 
-            // Main tab navigation
             document.querySelectorAll('.main-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    const tabName = tab.dataset.tab;
-
-                    // Hide all tabs
-                    document.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.add('hidden');
-                    });
-
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.main-tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-
-                    // Show selected tab
-                    G(`${tabName}-tab`).classList.remove('hidden');
+                    const name = tab.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+                    G(`${name}-tab`).classList.remove('hidden');
                     tab.classList.add('active');
-
-                    // Special handling for each tab
-                    if (tabName === 'favorites') {
-                        renderFavoritesTab();
-                    } else if (tabName === 'search' && lastPlaylistData) {
-                        // Restore last playlist data when switching back to search tab
-                        renderPlaylist(lastPlaylistData);
-                    } else if (tabName === 'playlists') {
-                        renderPlaylists();
-                    } else if (tabName === 'history') {
-                        renderPlaybackHistory();
-                    }
+                    if (name === 'favorites') renderFavoritesTab();
+                    if (name === 'search' && lastPlaylistData) renderPlaylist(lastPlaylistData);
+                    if (name === 'playlists') renderPlaylists();
+                    if (name === 'history') renderPlaybackHistory();
                 });
             });
 
-            // Fetch button
             G('fetch-btn').addEventListener('click', handleFetch);
-            G('sc-url-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') handleFetch();
-            });
-
-            // Clear history button
+            G('sc-url-input').addEventListener('keypress', e => { if (e.key === 'Enter') handleFetch(); });
+            
             G('clear-history').addEventListener('click', () => {
                 searchHistory = [];
                 localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
                 renderSearchHistory();
-                showToast("Search history cleared");
             });
 
-            // Clear playback history button
             G('clear-playback-history').addEventListener('click', () => {
-                if (confirm("Are you sure you want to clear your playback history?")) {
-                    clearPlaybackHistory();
-                }
+                if(confirm("Clear playback history?")) clearPlaybackHistory();
             });
 
-            // Create playlist button
+            // Modal Logic
+            const toggleModal = (id, show) => G(id).classList.toggle('active', show);
             G('create-playlist-btn').addEventListener('click', () => {
-                G('create-playlist-modal').classList.add('active');
-                G('playlist-name').value = '';
-                G('playlist-description').value = '';
-                G('playlist-name').focus();
+                toggleModal('create-playlist-modal', true);
+                G('playlist-name').value = ''; G('playlist-description').value = '';
             });
-
-            // Modal event listeners
-            G('close-create-playlist-modal').addEventListener('click', () => {
-                G('create-playlist-modal').classList.remove('active');
-            });
-
-            G('cancel-create-playlist').addEventListener('click', () => {
-                G('create-playlist-modal').classList.remove('active');
-            });
-
+            G('close-create-playlist-modal').addEventListener('click', () => toggleModal('create-playlist-modal', false));
+            G('cancel-create-playlist').addEventListener('click', () => toggleModal('create-playlist-modal', false));
             G('confirm-create-playlist').addEventListener('click', () => {
                 const name = G('playlist-name').value.trim();
-                const description = G('playlist-description').value.trim();
-
-                if (!name) {
-                    showToast("Please enter a playlist name");
-                    return;
-                }
-
-                createPlaylist(name, description);
-                G('create-playlist-modal').classList.remove('active');
-                showToast("Playlist created");
+                const desc = G('playlist-description').value.trim();
+                if (name) { createPlaylist(name, desc); toggleModal('create-playlist-modal', false); showToast("Playlist created"); }
             });
+            G('close-add-to-playlist-modal').addEventListener('click', () => toggleModal('add-to-playlist-modal', false));
+            G('cancel-add-to-playlist').addEventListener('click', () => toggleModal('add-to-playlist-modal', false));
 
-            // Close add to playlist modal
-            G('close-add-to-playlist-modal').addEventListener('click', () => {
-                G('add-to-playlist-modal').classList.remove('active');
-            });
-
-            G('cancel-add-to-playlist').addEventListener('click', () => {
-                G('add-to-playlist-modal').classList.remove('active');
-            });
-
-            // Context menu event listeners
-            G('ctx-play-next').addEventListener('click', () => {
-                if (contextMenuTrack) {
-                    addToQueue(contextMenuTrack, 'next');
-                }
-                hideContextMenu();
-            });
-
-            G('ctx-play-later').addEventListener('click', () => {
-                if (contextMenuTrack) {
-                    addToQueue(contextMenuTrack, 'end');
-                }
-                hideContextMenu();
-            });
-
-            G('ctx-add-to-playlist').addEventListener('click', () => {
-                if (contextMenuTrack) {
-                    showAddToPlaylistModal(contextMenuTrack);
-                }
-                hideContextMenu();
-            });
-
-            G('ctx-toggle-favorite').addEventListener('click', () => {
-                if (contextMenuTrack) {
-                    toggleFavorite(contextMenuTrack);
-                }
-                hideContextMenu();
-            });
-
+            // Context Menu Items
+            G('ctx-play-next').addEventListener('click', () => { if(contextMenuTrack) addToQueue(contextMenuTrack, 'next'); hideContextMenu(); });
+            G('ctx-play-later').addEventListener('click', () => { if(contextMenuTrack) addToQueue(contextMenuTrack, 'end'); hideContextMenu(); });
+            G('ctx-add-to-playlist').addEventListener('click', () => { if(contextMenuTrack) showAddToPlaylistModal(contextMenuTrack); hideContextMenu(); });
+            G('ctx-toggle-favorite').addEventListener('click', () => { if(contextMenuTrack) toggleFavorite(contextMenuTrack); hideContextMenu(); });
             G('ctx-download').addEventListener('click', () => {
-                if (contextMenuTrack) {
+                if(contextMenuTrack) {
                     const link = document.createElement('a');
                     link.href = `${API_BASE_URL}/api/download?url=${encodeURIComponent(contextMenuTrack.track_url)}`;
-                    link.download = `${contextMenuTrack.title} - ${contextMenuTrack.performer}.mp3`;
+                    link.download = `${contextMenuTrack.title}.mp3`;
                     link.click();
                 }
                 hideContextMenu();
             });
 
-            // Player expansion/minimization
+            // Player Expand/Collapse
             G('minimized-player').addEventListener('click', (e) => {
                 if (e.target.closest('button')) return;
-
-                // Store current player tab before expanding
-                const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
-                if (activeTabButton) {
-                    lastPlayerTab = activeTabButton.dataset.tab;
-                }
-
                 G('persistent-player-container').classList.add('expanded');
-
-                // Ensure player UI is updated when expanding
-                if (currentTrack) {
-                    updatePlayerUI(currentTrack);
-                }
-
-                // Always switch to "Now Playing" tab when expanding
-                switchPlayerTab('now-playing');
-
-                // If the queue tab was the last active tab, update it
-                if (lastPlayerTab === 'queue') {
-                    renderPlayerQueue();
-                }
+                // Ensure correct tab logic
+                const active = document.querySelector('#expanded-player .tab-button.active');
+                if(active) switchPlayerTab(active.dataset.tab);
             });
+            G('minimize-btn').addEventListener('click', () => G('persistent-player-container').classList.remove('expanded'));
 
-            G('minimize-btn').addEventListener('click', () => {
-                // Store current player tab before minimizing
-                const activeTabButton = document.querySelector('#expanded-player .tab-button.active');
-                if (activeTabButton) {
-                    lastPlayerTab = activeTabButton.dataset.tab;
-                }
-
-                G('persistent-player-container').classList.remove('expanded');
-
-                // Ensure player UI is updated when minimizing
-                if (currentTrack) {
-                    updatePlayerUI(currentTrack);
-                }
-            });
-
-            // Tab switching in player
             document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabName = btn.dataset.tab;
-                    switchPlayerTab(tabName);
-                });
+                btn.addEventListener('click', () => switchPlayerTab(btn.dataset.tab));
             });
-
-            // Function to switch player tabs
-            function switchPlayerTab(tabName) {
-                // Hide all tabs
-                document.querySelectorAll('#expanded-player .tab-content').forEach(tab => tab.classList.add('hidden'));
+            
+            function switchPlayerTab(name) {
+                document.querySelectorAll('#expanded-player .tab-content').forEach(t => t.classList.add('hidden'));
                 document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-
-                // Show selected tab
-                G(`${tabName}-tab`).classList.remove('hidden');
-                document.querySelector(`.tab-button[data-tab="${tabName}"]`).classList.add('active');
-
-                // Store the active tab
-                lastPlayerTab = tabName;
-
-                // Special handling for queue tab - update when switching to it
-                if (tabName === 'queue') {
-                    renderPlayerQueue();
-                }
+                G(`${name}-tab`).classList.remove('hidden');
+                document.querySelector(`.tab-button[data-tab="${name}"]`).classList.add('active');
+                if(name === 'queue') renderPlayerQueue();
             }
 
             // Player Controls
-            [G('player-play-pause-btn-mini'), G('player-play-pause-btn-expanded')].forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (currentTrackIndex === -1 && currentPlaylist.length > 0) {
-                        playTrack(0);
-                    } else if (audio.paused) {
-                        audio.play();
-                    } else {
-                        audio.pause();
-                    }
-                });
-            });
-
+            const playPauseAction = () => {
+                if (currentTrackIndex === -1 && currentPlaylist.length > 0) playTrack(0);
+                else if (audio.paused) audio.play();
+                else audio.pause();
+            };
+            G('player-play-pause-btn-mini').addEventListener('click', playPauseAction);
+            G('player-play-pause-btn-expanded').addEventListener('click', playPauseAction);
+            
             G('player-next-btn').addEventListener('click', playNext);
             G('player-prev-btn').addEventListener('click', playPrev);
-
-            // Favorite buttons
-            [G('player-favorite-btn-mini'), G('player-favorite-btn-expanded')].forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
-                        toggleFavorite(currentPlaylist[currentTrackIndex]);
-                    }
-                });
-            });
-
-            // Share button
+            G('player-favorite-btn-mini').addEventListener('click', () => { if(currentTrackIndex !== -1) toggleFavorite(currentPlaylist[currentTrackIndex]); });
+            G('player-favorite-btn-expanded').addEventListener('click', () => { if(currentTrackIndex !== -1) toggleFavorite(currentPlaylist[currentTrackIndex]); });
+            
             G('player-share-btn').addEventListener('click', () => {
-                if (currentTrackIndex !== -1 && currentPlaylist[currentTrackIndex]) {
-                    const track = currentPlaylist[currentTrackIndex];
-                    if (navigator.share) {
-                        navigator.share({
-                            title: track.title,
-                            text: `Check out ${track.title} by ${track.performer} on SoundCloud`,
-                            url: track.track_url
-                        }).catch(err => console.log('Error sharing:', err));
-                    } else {
-                        // Fallback - copy to clipboard
-                        navigator.clipboard.writeText(track.track_url).then(() => {
-                            showToast("Link copied to clipboard");
-                        }).catch(err => {
-                            console.error('Could not copy text: ', err);
-                            showToast("Failed to copy link");
-                        });
-                    }
+                if(currentTrackIndex !== -1) {
+                    const t = currentPlaylist[currentTrackIndex];
+                    if(navigator.share) navigator.share({title: t.title, text: `Listen to ${t.title}`, url: t.track_url}).catch(console.error);
+                    else { navigator.clipboard.writeText(t.track_url); showToast("Link copied"); }
                 }
             });
 
-            // Shuffle
             G('player-shuffle-btn').addEventListener('click', (e) => {
                 isShuffle = !isShuffle;
-                e.currentTarget.classList.toggle('active', isShuffle);
-
-                if (currentTrackIndex === -1) return; // Don't shuffle if nothing is playing
-
+                e.currentTarget.classList.toggle('text-purple-400', isShuffle);
+                e.currentTarget.classList.toggle('text-gray-400', !isShuffle);
+                
+                if (currentTrackIndex === -1) return;
                 if (isShuffle) {
                     const current = currentPlaylist[currentTrackIndex];
-                    const otherTracks = currentPlaylist.filter((_, i) => i !== currentTrackIndex);
-                    const shuffledOtherTracks = shuffleArray(otherTracks);
-                    currentPlaylist = [current, ...shuffledOtherTracks];
+                    const others = currentPlaylist.filter((_, i) => i !== currentTrackIndex);
+                    currentPlaylist = [current, ...shuffleArray(others)];
                     currentTrackIndex = 0;
                 } else {
-                    const currentUrl = currentPlaylist[currentTrackIndex].track_url;
+                    const url = currentPlaylist[currentTrackIndex].track_url;
                     currentPlaylist = [...originalPlaylist];
-                    currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === currentUrl);
+                    currentTrackIndex = currentPlaylist.findIndex(t => t.track_url === url);
                 }
-
-                renderPlaylistTab();
-                showToast(isShuffle ? "Shuffle enabled" : "Shuffle disabled");
+                showToast(isShuffle ? "Shuffle On" : "Shuffle Off");
             });
 
-            // Repeat
             G('player-repeat-btn').addEventListener('click', (e) => {
                 const modes = ['none', 'all', 'one'];
-                const nextIndex = (modes.indexOf(repeatMode) + 1) % modes.length;
-                repeatMode = modes[nextIndex];
-
-                // Update icon based on mode
-                const iconMap = {
-                    'none': 'fa-redo',
-                    'all': 'fa-redo',
-                    'one': 'fa-redo'
-                };
-
-                e.currentTarget.innerHTML = `<i class="fas ${iconMap[repeatMode]} text-lg"></i>`;
-                e.currentTarget.classList.toggle('active', repeatMode !== 'none');
-
-                // Add a visual indicator for 'one' mode
-                if (repeatMode === 'one') {
-                    e.currentTarget.innerHTML = `<i class="fas fa-redo text-lg"></i><span class="absolute text-xs">1</span>`;
-                    e.currentTarget.style.position = 'relative';
-                } else {
-                    e.currentTarget.style.position = '';
-                }
-
-                const modeNames = {
-                    'none': 'Repeat off',
-                    'all': 'Repeat all',
-                    'one': 'Repeat one'
-                };
-
-                showToast(modeNames[repeatMode]);
+                repeatMode = modes[(modes.indexOf(repeatMode) + 1) % modes.length];
+                const btn = e.currentTarget;
+                if(repeatMode === 'none') { btn.innerHTML = '<i class="fas fa-redo"></i>'; btn.className = 'repeat-btn text-gray-400 hover:text-white transition-colors'; }
+                else if(repeatMode === 'all') { btn.innerHTML = '<i class="fas fa-redo"></i>'; btn.className = 'repeat-btn text-purple-400 hover:text-purple-300 transition-colors'; }
+                else { btn.innerHTML = '<div class="relative"><i class="fas fa-redo"></i><span class="absolute -top-1 -right-2 text-[8px] font-bold">1</span></div>'; btn.className = 'repeat-btn text-purple-400 hover:text-purple-300 transition-colors'; }
+                showToast(`Repeat: ${repeatMode}`);
             });
 
-            // Volume
-            G('player-volume-slider').addEventListener('input', e => {
-                audio.volume = e.target.value / 100;
-            });
-
-            // Crossfade slider
-            G('crossfade-slider').addEventListener('input', e => {
-                crossfadeDuration = parseFloat(e.target.value);
-                G('crossfade-value').textContent = `${crossfadeDuration}s`;
-
-                // Disable gapless playback when crossfade is enabled
-                if (crossfadeDuration > 0) {
-                    gaplessPlayback = false;
-                    G('gapless-playback').checked = false;
-                }
-            });
-
-            // Gapless playback checkbox
-            G('gapless-playback').addEventListener('change', e => {
-                gaplessPlayback = e.target.checked;
-
-                // Disable crossfade when gapless playback is enabled
-                if (gaplessPlayback) {
-                    crossfadeDuration = 0;
-                    G('crossfade-slider').value = 0;
-                    G('crossfade-value').textContent = '0s';
-                }
-            });
-
-            // Progress bar
+            G('player-volume-slider').addEventListener('input', e => audio.volume = e.target.value / 100);
+            
+            // Progress Bar Logic
             const progressContainer = G('progress-container');
-            const progressHandler = e => {
-                if (!audio.duration) return;
-
+            const handleProgress = (e) => {
+                if(!audio.duration) return;
                 const rect = progressContainer.getBoundingClientRect();
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                if (clientX === undefined) return;
-
                 const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
                 audio.currentTime = pos * audio.duration;
                 G('player-progress-bar').style.width = `${pos * 100}%`;
             };
+            progressContainer.addEventListener('mousedown', (e) => { isDraggingProgress = true; handleProgress(e); });
+            document.addEventListener('mousemove', (e) => { if(isDraggingProgress) handleProgress(e); });
+            document.addEventListener('mouseup', () => isDraggingProgress = false);
+            progressContainer.addEventListener('touchstart', (e) => { isDraggingProgress = true; handleProgress(e); });
+            document.addEventListener('touchmove', (e) => { if(isDraggingProgress) handleProgress(e); });
+            document.addEventListener('touchend', () => isDraggingProgress = false);
 
-            progressContainer.addEventListener('mousedown', e => {
-                isDraggingProgress = true;
-                progressHandler(e);
-            });
-
-            document.addEventListener('mousemove', e => {
-                if (isDraggingProgress) progressHandler(e);
-            });
-
-            document.addEventListener('mouseup', () => {
-                isDraggingProgress = false;
-            });
-
-            progressContainer.addEventListener('touchstart', e => {
-                isDraggingProgress = true;
-                progressHandler(e);
-            });
-
-            document.addEventListener('touchmove', e => {
-                if (isDraggingProgress) progressHandler(e);
-            });
-
-            document.addEventListener('touchend', () => {
-                isDraggingProgress = false;
-            });
-
-            // Sleep timer
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
-            // Audio events
-            audio.addEventListener('play', () => {
-                setPlayPauseIcons(false);
-                renderPlayerQueue(); // Update queue when playback starts
-            });
-
-            audio.addEventListener('pause', () => {
-                setPlayPauseIcons(true);
-                renderPlayerQueue(); // Update queue when playback pauses
-            });
-
-            audio.addEventListener('ended', () => {
-                playNext();
-                renderPlayerQueue(); // Update queue when track ends
-            });
-
+            // Audio Listeners
+            audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); });
+            audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); });
+            audio.addEventListener('ended', () => { playNext(); renderPlayerQueue(); });
             audio.addEventListener('loadedmetadata', () => {
                 G('player-total-duration').textContent = formatTime(audio.duration);
-                // Hide loading indicators
                 G('player-loading-indicator').classList.add('hidden');
                 G('player-loading-indicator-expanded').classList.add('hidden');
             });
-
             audio.addEventListener('timeupdate', () => {
                 G('player-current-time').textContent = formatTime(audio.currentTime);
-                if (!isDraggingProgress && audio.duration) {
-                    G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+                if(!isDraggingProgress && audio.duration) {
+                    const width = `${(audio.currentTime / audio.duration) * 100}%`;
+                    G('player-progress-bar').style.width = width;
+                    // Visual update for mini player progress bar if desired
+                    const miniBar = document.getElementById('mini-progress-bar');
+                    if(miniBar) miniBar.style.width = width;
                 }
             });
-
-            audio.addEventListener('error', (e) => {
-                console.error('Audio error:', e);
-                showToast("Error loading track. Please try again.");
-                // Hide loading indicators
+            audio.addEventListener('error', () => {
+                showToast("Error loading track");
                 G('player-loading-indicator').classList.add('hidden');
                 G('player-loading-indicator-expanded').classList.add('hidden');
             });
 
-            // Keyboard shortcuts
+            // Keyboard
             document.addEventListener('keydown', (e) => {
-                // Ignore if user is typing in an input field
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-                switch (e.key) {
-                    case ' ':
-                        e.preventDefault();
-                        if (currentTrackIndex === -1 && currentPlaylist.length > 0) {
-                            playTrack(0);
-                        } else if (audio.paused) {
-                            audio.play();
-                        } else {
-                            audio.pause();
-                        }
-                        break;
-                    case 'ArrowRight':
-                        e.preventDefault();
-                        playNext();
-                        break;
-                    case 'ArrowLeft':
-                        e.preventDefault();
-                        playPrev();
-                        break;
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        audio.volume = Math.min(1, audio.volume + 0.1);
-                        G('player-volume-slider').value = audio.volume * 100;
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        audio.volume = Math.max(0, audio.volume - 0.1);
-                        G('player-volume-slider').value = audio.volume * 100;
-                        break;
-                    case 's':
-                    case 'S':
-                        e.preventDefault();
-                        G('player-shuffle-btn').click();
-                        break;
-                    case 'r':
-                    case 'R':
-                        e.preventDefault();
-                        G('player-repeat-btn').click();
-                        break;
-                }
+                if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                if(e.key === ' ') { e.preventDefault(); playPauseAction(); }
+                if(e.key === 'ArrowRight') playNext();
+                if(e.key === 'ArrowLeft') playPrev();
             });
 
-            // Initialize UI
             setPlayPauseIcons(true);
         });
 
-        // Helper function to show "Add to Playlist" modal
         function showAddToPlaylistModal(track) {
             const container = G('playlist-options-container');
             container.innerHTML = '';
-
             if (playlists.length === 0) {
-                container.innerHTML = `
-            <p class="text-center" style="color: var(--hint-color);">No playlists available</p>
-            <button class="btn btn-primary w-full mt-2" id="create-playlist-from-modal">Create New Playlist</button>
-        `;
-
-                G('create-playlist-from-modal').addEventListener('click', () => {
+                container.innerHTML = `<button class="btn-primary w-full py-2 rounded-lg" id="modal-create-pl-btn">Create Playlist First</button>`;
+                G('modal-create-pl-btn').addEventListener('click', () => {
                     G('add-to-playlist-modal').classList.remove('active');
                     G('create-playlist-modal').classList.add('active');
                 });
             } else {
                 playlists.forEach(playlist => {
-                    const option = document.createElement('div');
-                    option.className = 'context-menu-item';
-                    option.innerHTML = `<i class="fas fa-music"></i> ${playlist.name}`;
-                    option.dataset.playlistId = playlist.id;
-                    option.addEventListener('click', () => {
-                        const playlistId = option.dataset.playlistId;
-                        addTrackToPlaylist(playlistId, track);
+                    const div = document.createElement('div');
+                    div.className = 'p-3 hover:bg-white/10 rounded-lg cursor-pointer flex items-center gap-2';
+                    div.innerHTML = `<i class="fas fa-list"></i> ${playlist.name}`;
+                    div.addEventListener('click', () => {
+                        addTrackToPlaylist(playlist.id, track);
                         G('add-to-playlist-modal').classList.remove('active');
                     });
-                    container.appendChild(option);
+                    container.appendChild(div);
                 });
             }
-
             G('add-to-playlist-modal').classList.add('active');
         }
-
-        // Add CSS for toggle switch
-        const style = document.createElement('style');
-        style.textContent = `
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--primary-color);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-    `;
-        document.head.appendChild(style);
     </script>
 </body>
 
