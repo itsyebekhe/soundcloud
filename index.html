@@ -1737,49 +1737,45 @@ let activeLockScreenIcon = null;
 function updateMediaSession(track) {
     if ('mediaSession' in navigator) {
         
-        // --- 1. ROBUST ARTWORK LOGIC ---
-        // Some songs don't have high-res art, so we keep the original as fallback
-        const originalArt = track.thumb || '';
-        const highResArt = originalArt.replace('-large.', '-t500x500.');
-        
+        // 1. Setup Artwork (Keep existing logic)
+        let artworkUrl = track.thumb || '';
+        if (artworkUrl.includes('-large')) {
+            artworkUrl = artworkUrl.replace('-large', '-t500x500');
+        }
+
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
             artist: track.performer,
             album: "SoundCloud Player",
             artwork: [
-                { src: highResArt, sizes: '512x512', type: 'image/jpeg' },
-                { src: originalArt, sizes: '100x100', type: 'image/jpeg' } // Fallback size
+                { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }
             ]
         });
 
-        // --- 2. FAIL-SAFE PLAY HANDLER ---
+        // 2. THE FIX: Aggressive Play Handler
         navigator.mediaSession.setActionHandler('play', async () => {
-            console.log("Lock Screen Play Clicked");
+            console.log("Lock Screen Play Triggered");
+            
+            // Check if we are using a Blob (RAM) file
+            const isUsingBlob = audio.src.startsWith('blob:');
+            
+            // If using Blob, assume it's dead/frozen by the OS.
+            // Switch IMMEDIATELY to network stream to ensure playback works.
+            if (isUsingBlob && currentTrack) {
+                console.log("Blob detected on resume. Switching to Network Stream for safety.");
+                const savedTime = audio.currentTime; // Remember position
+                
+                // Swap source to the online API URL
+                audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(currentTrack.track_url)}`;
+                audio.currentTime = savedTime; // Jump back to where we were
+            }
+
             try {
-                // Try to play normally
                 await audio.play();
                 navigator.mediaSession.playbackState = "playing";
                 setPlayPauseIcons(false);
             } catch (err) {
-                console.error("Cache died, switching to network stream:", err);
-                
-                // --- THE CRITICAL FIX ---
-                // If play fails (because Blob is gone), reload from Network
-                if (currentTrack) {
-                    const savedTime = audio.currentTime; // Remember where we were
-                    
-                    // Force Network URL (Bypass Cache)
-                    audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(currentTrack.track_url)}`;
-                    audio.currentTime = savedTime; // Restore position
-                    
-                    try {
-                        await audio.play();
-                        navigator.mediaSession.playbackState = "playing";
-                        setPlayPauseIcons(false);
-                    } catch (e) {
-                        console.error("Recovery failed", e);
-                    }
-                }
+                console.error("Force Play failed:", err);
             }
         });
 
@@ -2209,6 +2205,21 @@ audio.addEventListener('ended', () => {
             });
 
             setPlayPauseIcons(true);
+
+            // --- NEW: Sync UI when app comes to foreground ---
+document.addEventListener('visibilitychange', () => {
+    // When user unlocks phone or switches back to tab
+    if (document.visibilityState === 'visible') {
+        // Force the icons to match the actual audio state
+        setPlayPauseIcons(audio.paused);
+        
+        // Also sync the progress bar immediately
+        if (audio.duration) {
+             G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+             G('player-current-time').textContent = formatTime(audio.currentTime);
+        }
+    }
+});
         });
 
         function showAddToPlaylistModal(track) {
