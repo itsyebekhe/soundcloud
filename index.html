@@ -1731,28 +1731,41 @@
         }
 
         // --- Media Session API ---
-function updateMediaSession(track) {
+        function updateMediaSession(track) {
     if ('mediaSession' in navigator) {
+        // Ensure we have a valid image URL
+        const artworkUrl = track.thumb || '';
+
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
             artist: track.performer,
+            album: "SoundCloud Player", // Adding an album name helps Android render the card
             artwork: [
-                { src: track.thumb, sizes: '512x512', type: 'image/jpeg' }
+                // We define multiple sizes pointing to the same URL.
+                // This tricks iOS and Android into accepting the image for different views 
+                // (Notification center, Lock screen, Control Center, WearOS watch, etc.)
+                { src: artworkUrl, sizes: '96x96',   type: 'image/jpeg' },
+                { src: artworkUrl, sizes: '128x128', type: 'image/jpeg' },
+                { src: artworkUrl, sizes: '192x192', type: 'image/jpeg' },
+                { src: artworkUrl, sizes: '256x256', type: 'image/jpeg' },
+                { src: artworkUrl, sizes: '384x384', type: 'image/jpeg' },
+                { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' },
             ]
         });
 
+        // Re-attach handlers (Good practice to do this every time metadata updates)
         navigator.mediaSession.setActionHandler('play', () => {
             audio.play();
-            setPlayPauseIcons(false);
         });
         navigator.mediaSession.setActionHandler('pause', () => {
             audio.pause();
-            setPlayPauseIcons(true);
         });
-        navigator.mediaSession.setActionHandler('previoustrack', playPrev);
-        navigator.mediaSession.setActionHandler('nexttrack', playNext);
-        
-        // Allow seeking via lock screen
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            playPrev();
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            playNext();
+        });
         navigator.mediaSession.setActionHandler('seekto', (details) => {
             if (details.fastSeek && 'fastSeek' in audio) {
                 audio.fastSeek(details.seekTime);
@@ -2106,8 +2119,8 @@ if (audioCache.has(track.track_url)) {
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
             // Audio Listeners
-            audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); });
-            audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); });
+            audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";});
+            audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";});
             audio.addEventListener('timeupdate', () => {
     // 1. Update Progress Bar (Existing logic)
     G('player-current-time').textContent = formatTime(audio.currentTime);
