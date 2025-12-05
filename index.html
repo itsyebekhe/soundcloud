@@ -1730,81 +1730,34 @@
         }
 
         // --- Media Session API ---
-// Helper: Convert URL to Blob for reliable Lock Screen Art
-async function getBlobUrl(url) {
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return URL.createObjectURL(blob);
-    } catch (e) {
-        console.warn("Failed to create blob for artwork", e);
-        return url; // Fallback to original URL
-    }
-}
-// --- Advanced Media Session ---
-async function updateMediaSession(track) {
-    if (!('mediaSession' in navigator)) return;
+function updateMediaSession(track) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: track.title,
+            artist: track.performer,
+            artwork: [
+                { src: track.thumb, sizes: '512x512', type: 'image/jpeg' }
+            ]
+        });
 
-    // 1. Fix Artwork: Use local Blob instead of remote URL
-    const artworkUrl = track.thumb ? await getBlobUrl(track.thumb) : '';
-
-    navigator.mediaSession.metadata = new MediaMetadata({
-        title: track.title,
-        artist: track.performer,
-        album: "SoundCloud Player",
-        artwork: [
-            { src: artworkUrl, sizes: '96x96', type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '128x128', type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '192x192', type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '256x256', type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '384x384', type: 'image/jpeg' },
-            { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' },
-        ]
-    });
-
-    // 2. Fix Controls: Explicit Async Handlers
-    navigator.mediaSession.setActionHandler('play', async () => {
-        try {
-            await audio.play();
-            navigator.mediaSession.playbackState = 'playing';
-        } catch (e) { console.error(e); }
-    });
-
-    navigator.mediaSession.setActionHandler('pause', () => {
-        audio.pause();
-        navigator.mediaSession.playbackState = 'paused';
-    });
-
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-        playPrev();
-        // Update metadata immediately for the next track
-        if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-    });
-
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-        playNext();
-        if('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-    });
-
-    navigator.mediaSession.setActionHandler('seekto', (details) => {
-        if (details.fastSeek && 'fastSeek' in audio) {
-            audio.fastSeek(details.seekTime);
-        } else {
+        navigator.mediaSession.setActionHandler('play', () => {
+            audio.play();
+            setPlayPauseIcons(false);
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audio.pause();
+            setPlayPauseIcons(true);
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+        navigator.mediaSession.setActionHandler('nexttrack', playNext);
+        
+        // Allow seeking via lock screen
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+            if (details.fastSeek && 'fastSeek' in audio) {
+                audio.fastSeek(details.seekTime);
+                return;
+            }
             audio.currentTime = details.seekTime;
-        }
-        updatePositionState(); // Sync timeline immediately
-    });
-    
-    updatePositionState();
-}
-
-// Helper to keep the lockscreen timeline synced
-function updatePositionState() {
-    if ('setPositionState' in navigator.mediaSession && audio.duration && !isNaN(audio.duration)) {
-        navigator.mediaSession.setPositionState({
-            duration: audio.duration,
-            playbackRate: audio.playbackRate,
-            position: audio.currentTime
         });
     }
 }
@@ -2151,42 +2104,24 @@ if (audioCache.has(track.track_url)) {
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
             // Audio Listeners
-// Audio Listeners
-audio.addEventListener('play', () => { 
-    setPlayPauseIcons(false); 
-    renderPlayerQueue();
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
-});
-
-audio.addEventListener('pause', () => { 
-    setPlayPauseIcons(true); 
-    renderPlayerQueue();
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
-});
-
-// IMPORTANT: Keep the timeline synced
-audio.addEventListener('timeupdate', () => {
-    G('player-current-time').textContent = formatTime(audio.currentTime);
-    if (!isDraggingProgress && audio.duration) {
-        const width = `${(audio.currentTime / audio.duration) * 100}%`;
-        G('player-progress-bar').style.width = width;
-        const miniBar = document.getElementById('mini-progress-bar');
-        if (miniBar) miniBar.style.width = width;
-    }
-    // Only update position state occasionally to save performance, or at end of track
-    if (Math.floor(audio.currentTime) % 5 === 0) { 
-        updatePositionState();
-    }
-});
-
-// Sync timeline when metadata loads
-audio.addEventListener('loadedmetadata', () => {
-    G('player-total-duration').textContent = formatTime(audio.duration);
-    G('player-loading-indicator').classList.add('hidden');
-    G('player-loading-indicator-expanded').classList.add('hidden');
-    updatePositionState(); // <--- Add this
-});
+            audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); });
+            audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); });
             audio.addEventListener('ended', () => { playNext(); renderPlayerQueue(); });
+            audio.addEventListener('loadedmetadata', () => {
+                G('player-total-duration').textContent = formatTime(audio.duration);
+                G('player-loading-indicator').classList.add('hidden');
+                G('player-loading-indicator-expanded').classList.add('hidden');
+            });
+            audio.addEventListener('timeupdate', () => {
+                G('player-current-time').textContent = formatTime(audio.currentTime);
+                if(!isDraggingProgress && audio.duration) {
+                    const width = `${(audio.currentTime / audio.duration) * 100}%`;
+                    G('player-progress-bar').style.width = width;
+                    // Visual update for mini player progress bar if desired
+                    const miniBar = document.getElementById('mini-progress-bar');
+                    if(miniBar) miniBar.style.width = width;
+                }
+            });
             audio.addEventListener('error', () => {
                 showToast("Error loading track");
                 G('player-loading-indicator').classList.add('hidden');
