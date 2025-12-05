@@ -631,7 +631,7 @@
                     <i class="fab fa-github text-lg"></i>
                 </a>
             </div>
-            <p class="opacity-60">Designed with ❤️ • YEBEKHE</p>
+            <p class="opacity-60">Designed for 2025 • YEBEKHE</p>
         </footer>
     </div>
 
@@ -873,7 +873,7 @@
         </div>
     </div>
 
-    <audio id="audio-element" class="hidden" preload="metadata"></audio>
+    <audio id="audio-element" class="hidden" preload="auto" autoplay></audio>
 
     <!-- Original Javascript Logic -->
     <script>
@@ -948,6 +948,7 @@
         let gaplessPlayback = false; // Gapless playback setting
         let contextMenuTrack = null; // Track for context menu operations
         let isCrossfading = false; // Flag to track crossfading state
+        let isTrackSwitching = false;
 
         // --- DOM Element Helpers ---
         const G = id => document.getElementById(id);
@@ -1791,6 +1792,7 @@ if (audioCache.has(track.track_url)) {
             renderPlayerQueue();
             updatePlayerUI(track);
 
+            isTrackSwitching = false;
             audio.play().catch(e => showToast("Playback restricted. Tap play."));
             G('persistent-player-container').classList.add('show');
             highlightActiveTrack();
@@ -2106,7 +2108,30 @@ if (audioCache.has(track.track_url)) {
             // Audio Listeners
             audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); });
             audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); });
-            audio.addEventListener('ended', () => { playNext(); renderPlayerQueue(); });
+            audio.addEventListener('timeupdate', () => {
+    // 1. Update Progress Bar (Existing logic)
+    G('player-current-time').textContent = formatTime(audio.currentTime);
+    if (!isDraggingProgress && audio.duration) {
+        G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
+    }
+
+    // 2. Proactive Track Switching (The Fix)
+    // Check if we are within 0.2 seconds of the end
+    if (audio.duration && audio.currentTime >= audio.duration - 0.2) {
+        if (!isTrackSwitching) {
+            console.log("Proactive track switch triggered ⚡");
+            isTrackSwitching = true; // Lock it so we don't skip twice
+            playNext();
+        }
+    }
+});
+
+// Fallback: If the proactive switch failed for some reason, 'ended' catches it
+audio.addEventListener('ended', () => {
+    if (!isTrackSwitching) {
+        playNext();
+    }
+});
             audio.addEventListener('loadedmetadata', () => {
                 G('player-total-duration').textContent = formatTime(audio.duration);
                 G('player-loading-indicator').classList.add('hidden');
