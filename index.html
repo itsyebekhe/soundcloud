@@ -1778,6 +1778,7 @@ function updateMediaSession(track) {
             G('player-loading-indicator').classList.remove('hidden');
             G('player-loading-indicator-expanded').classList.remove('hidden');
 
+            updateMediaSession(track);
             // Check if we have the song preloaded in memory
 if (audioCache.has(track.track_url)) {
     console.log("Playing from instant cache ⚡");
@@ -1811,7 +1812,6 @@ if (audioCache.has(track.track_url)) {
     if (index + 2 < currentPlaylist.length) {
         setTimeout(() => preloadTrack(currentPlaylist[index + 2]), 3000); 
     }
-    updateMediaSession(track);
         };
 
         const playAllFavorites = () => {
