@@ -1731,44 +1731,74 @@
         }
 
         // --- Media Session API ---
-        function updateMediaSession(track) {
+        // Variable to manage memory for lock screen images
+let activeLockScreenIcon = null;
+
+async function updateMediaSession(track) {
     if ('mediaSession' in navigator) {
-        // --- FIX 1: Force High-Res Artwork ---
-        // SoundCloud sends 'large' (100x100). We replace it with 't500x500' (500x500).
-        let artworkUrl = track.thumb || '';
-        if (artworkUrl.includes('-large.')) {
-            artworkUrl = artworkUrl.replace('-large.', '-t500x500.');
+        
+        // --- 1. ALBUM ART FIX (Blob Strategy) ---
+        let artworkSrc = track.thumb || '';
+        
+        try {
+            // Clean up previous image to free RAM
+            if (activeLockScreenIcon) {
+                URL.revokeObjectURL(activeLockScreenIcon);
+                activeLockScreenIcon = null;
+            }
+
+            // Try to get high-res image (replace 'large' with 't500x500')
+            // This is crucial because mobile phones ignore small images
+            let highResUrl = artworkSrc.replace('-large.', '-t500x500.');
+            
+            // Download the image to memory
+            const response = await fetch(highResUrl);
+            const blob = await response.blob();
+            
+            // Create a local memory URL (blob:...)
+            activeLockScreenIcon = URL.createObjectURL(blob);
+            artworkSrc = activeLockScreenIcon; 
+            
+        } catch (e) {
+            // If download fails, fall back to the original URL
+            console.warn("Art fetch failed, using remote URL");
+            artworkSrc = track.thumb; 
         }
 
+        // Set metadata with the local memory image
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
             artist: track.performer,
             album: "SoundCloud Player",
             artwork: [
-                { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }
+                { src: artworkSrc, sizes: '96x96', type: 'image/jpeg' },
+                { src: artworkSrc, sizes: '128x128', type: 'image/jpeg' },
+                { src: artworkSrc, sizes: '192x192', type: 'image/jpeg' },
+                { src: artworkSrc, sizes: '256x256', type: 'image/jpeg' },
+                { src: artworkSrc, sizes: '384x384', type: 'image/jpeg' },
+                { src: artworkSrc, sizes: '512x512', type: 'image/jpeg' },
             ]
         });
 
-        // --- FIX 2: Async Play Handler ---
-        // We make this async to handle the browser's background restrictions better
+        // --- 2. PLAY BUTTON FIX (Async Handler) ---
         navigator.mediaSession.setActionHandler('play', async () => {
-            console.log("External Play Command Received");
             try {
-                // Resume audio context if suspended (common iOS issue)
-                if (audio.context && audio.context.state === 'suspended') {
-                    await audio.context.resume();
-                }
+                // Simply await the native play command
+                // This 'unfreezes' the background tab
                 await audio.play();
+                
+                // Update state immediately
                 navigator.mediaSession.playbackState = "playing";
+                setPlayPauseIcons(false);
             } catch (err) {
                 console.error("Play failed:", err);
             }
         });
 
         navigator.mediaSession.setActionHandler('pause', () => {
-            console.log("External Pause Command Received");
             audio.pause();
             navigator.mediaSession.playbackState = "paused";
+            setPlayPauseIcons(true);
         });
 
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
@@ -1777,9 +1807,9 @@
         navigator.mediaSession.setActionHandler('seekto', (details) => {
              if (details.fastSeek && 'fastSeek' in audio) {
                  audio.fastSeek(details.seekTime);
-                 return;
+             } else {
+                 audio.currentTime = details.seekTime;
              }
-             audio.currentTime = details.seekTime;
         });
     }
 }
@@ -1881,7 +1911,7 @@ if (audioCache.has(track.track_url)) {
             G('player-performer-mini').textContent = track.performer;
             G('player-performer-expanded').textContent = track.performer;
             
-            // Background blur for expanded player could be updated here if using dynamic colors
+            updateMediaSession(track); 
         }
 
         function setPlayPauseIcons(paused) {
@@ -2127,8 +2157,19 @@ if (audioCache.has(track.track_url)) {
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
             // Audio Listeners
-            audio.addEventListener('play', () => { setPlayPauseIcons(false); renderPlayerQueue(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";});
-            audio.addEventListener('pause', () => { setPlayPauseIcons(true); renderPlayerQueue(); if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";});
+            audio.addEventListener('play', () => {
+    setPlayPauseIcons(false);
+    renderPlayerQueue();
+    // NEW: Force lock screen to show "Pause" button
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+});
+
+audio.addEventListener('pause', () => {
+    setPlayPauseIcons(true);
+    renderPlayerQueue();
+    // NEW: Force lock screen to show "Play" button
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
+});
             audio.addEventListener('timeupdate', () => {
     // 1. Update Progress Bar (Existing logic)
     G('player-current-time').textContent = formatTime(audio.currentTime);
