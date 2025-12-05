@@ -1737,12 +1737,13 @@ let activeLockScreenIcon = null;
 function updateMediaSession(track) {
     if ('mediaSession' in navigator) {
         
-        // 1. Setup Artwork (Keep existing logic)
+        // 1. Artwork Fix (High Res)
         let artworkUrl = track.thumb || '';
         if (artworkUrl.includes('-large')) {
             artworkUrl = artworkUrl.replace('-large', '-t500x500');
         }
 
+        // 2. Set Metadata
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
             artist: track.performer,
@@ -1752,37 +1753,16 @@ function updateMediaSession(track) {
             ]
         });
 
-        // 2. THE FIX: Aggressive Play Handler
-        navigator.mediaSession.setActionHandler('play', async () => {
-            console.log("Lock Screen Play Triggered");
-            
-            // Check if we are using a Blob (RAM) file
-            const isUsingBlob = audio.src.startsWith('blob:');
-            
-            // If using Blob, assume it's dead/frozen by the OS.
-            // Switch IMMEDIATELY to network stream to ensure playback works.
-            if (isUsingBlob && currentTrack) {
-                console.log("Blob detected on resume. Switching to Network Stream for safety.");
-                const savedTime = audio.currentTime; // Remember position
-                
-                // Swap source to the online API URL
-                audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(currentTrack.track_url)}`;
-                audio.currentTime = savedTime; // Jump back to where we were
-            }
-
-            try {
-                await audio.play();
-                navigator.mediaSession.playbackState = "playing";
-                setPlayPauseIcons(false);
-            } catch (err) {
-                console.error("Force Play failed:", err);
-            }
+        // 3. Simple Command Handlers
+        // We use simple wrappers to ensure the site UI stays in sync
+        navigator.mediaSession.setActionHandler('play', () => {
+            audio.play();
+            // Note: The audio 'play' event listener will handle the UI updates
         });
 
         navigator.mediaSession.setActionHandler('pause', () => {
             audio.pause();
-            navigator.mediaSession.playbackState = "paused";
-            setPlayPauseIcons(true);
+            // Note: The audio 'pause' event listener will handle the UI updates
         });
 
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
@@ -1796,52 +1776,52 @@ function updateMediaSession(track) {
 }
 
         // --- Player Core ---
-        const playTrack = (index) => {
-            if (index < 0 || index >= currentPlaylist.length) return;
-            currentTrackIndex = index;
-            const track = currentPlaylist[index];
-            currentTrack = track;
-            addToPlaybackHistory(track);
+const playTrack = async (index) => {
+    if (index < 0 || index >= currentPlaylist.length) return;
 
-            G('player-loading-indicator').classList.remove('hidden');
-            G('player-loading-indicator-expanded').classList.remove('hidden');
-            updatePlayerUI(track);
-            // Check if we have the song preloaded in memory
-if (audioCache.has(track.track_url)) {
-    console.log("Playing from instant cache ⚡");
-    audio.src = audioCache.get(track.track_url);
-} else {
-    console.log("Streaming from network 📡");
-    audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
-    
-    // Optional: Cache the current song while it streams (so replaying it is instant)
-    preloadTrack(track); 
-}
-            audio.load();
+    currentTrackIndex = index;
+    const track = currentPlaylist[index];
+    currentTrack = track; // Store global reference
 
-            updateFavoriteButton(track.track_url);
-            queue = currentPlaylist.slice(currentTrackIndex + 1);
-            renderPlayerQueue();
-            
+    // 1. Update UI immediately
+    updatePlayerUI(track);
+    addToPlaybackHistory(track);
+    highlightActiveTrack();
 
-            isTrackSwitching = false;
-            audio.play().catch(e => showToast("Playback restricted. Tap play."));
-            G('persistent-player-container').classList.add('show');
-            highlightActiveTrack();
-            
-            // --- NEW: Trigger Preload for Next Track ---
-    // Check if there is a next track in the playlist
-    if (index + 1 < currentPlaylist.length) {
-        const nextTrack = currentPlaylist[index + 1];
-        // Small delay to let the current song start streaming first
-        setTimeout(() => preloadTrack(nextTrack), 1000); 
+    // 2. Set Audio Source (Robust Method)
+    const isCached = audioCache.has(track.track_url);
+    if (isCached) {
+        console.log("Attempting Cache Playback ⚡");
+        audio.src = audioCache.get(track.track_url);
+    } else {
+        console.log("Network Streaming 📡");
+        audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+        // Trigger preload for next track in background
+        if (index + 1 < currentPlaylist.length) {
+            setTimeout(() => preloadTrack(currentPlaylist[index + 1]), 2000);
+        }
     }
-    // Also preload the one after that if on WiFi (optional optimization)
-    if (index + 2 < currentPlaylist.length) {
-        setTimeout(() => preloadTrack(currentPlaylist[index + 2]), 3000); 
+
+    // 3. Play with Error Handling
+    try {
+        await audio.play();
+        setPlayPauseIcons(false);
+        renderPlayerQueue();
+        
+        // Sync Lock Screen State
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+        
+    } catch (e) {
+        console.warn("Playback interrupted or failed", e);
+        
+        // FAIL-SAFE: If Blob failed, force network stream immediately
+        if (isCached) {
+            console.log("Cache failed, falling back to Network...");
+            audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+            audio.play().catch(err => console.error("Final playback failure", err));
+        }
     }
-    updateMediaSession(track);
-        };
+};
 
         const playAllFavorites = () => {
             if (favoriteTracksData.length === 0) return;
@@ -2138,20 +2118,46 @@ if (audioCache.has(track.track_url)) {
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
             // Audio Listeners
-            audio.addEventListener('play', () => {
+// --- AUDIO EVENT LISTENERS (The Sync Logic) ---
+
+// 1. On Play: Update Site UI + Update Lock Screen State
+audio.addEventListener('play', () => {
     setPlayPauseIcons(false);
     renderPlayerQueue();
-    // NEW: Force lock screen to show "Pause" button
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
 });
 
+// 2. On Pause: Update Site UI + Update Lock Screen State
 audio.addEventListener('pause', () => {
     setPlayPauseIcons(true);
     renderPlayerQueue();
-    // NEW: Force lock screen to show "Play" button
     if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
 });
-            audio.addEventListener('timeupdate', () => {
+
+// 3. On Error: Auto-Recover
+audio.addEventListener('error', (e) => {
+    console.error("Audio Critical Error:", e);
+    // If the cache blob died, try reloading from network
+    if (audio.src.startsWith('blob:') && currentTrack) {
+        console.log("Recovering from dead blob...");
+        audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(currentTrack.track_url)}`;
+        audio.play();
+    }
+});
+
+// 4. On Track End: Play Next
+audio.addEventListener('ended', () => {
+    playNext();
+});
+
+// 5. App Visibility: Sync UI when unlocking phone
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        setPlayPauseIcons(audio.paused);
+    }
+});
+
+audio.addEventListener('timeupdate', () => {
     // 1. Update Progress Bar (Existing logic)
     G('player-current-time').textContent = formatTime(audio.currentTime);
     if (!isDraggingProgress && audio.duration) {
@@ -2166,13 +2172,6 @@ audio.addEventListener('pause', () => {
             isTrackSwitching = true; // Lock it so we don't skip twice
             playNext();
         }
-    }
-});
-
-// Fallback: If the proactive switch failed for some reason, 'ended' catches it
-audio.addEventListener('ended', () => {
-    if (!isTrackSwitching) {
-        playNext();
     }
 });
             audio.addEventListener('loadedmetadata', () => {
@@ -2205,21 +2204,6 @@ audio.addEventListener('ended', () => {
             });
 
             setPlayPauseIcons(true);
-
-            // --- NEW: Sync UI when app comes to foreground ---
-document.addEventListener('visibilitychange', () => {
-    // When user unlocks phone or switches back to tab
-    if (document.visibilityState === 'visible') {
-        // Force the icons to match the actual audio state
-        setPlayPauseIcons(audio.paused);
-        
-        // Also sync the progress bar immediately
-        if (audio.duration) {
-             G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-             G('player-current-time').textContent = formatTime(audio.currentTime);
-        }
-    }
-});
         });
 
         function showAddToPlaylistModal(track) {
