@@ -631,7 +631,7 @@
                     <i class="fab fa-github text-lg"></i>
                 </a>
             </div>
-            <p class="opacity-60">Designed for 2025 • YEBEKHE</p>
+            <p class="opacity-60">Designed with ❤️ • YEBEKHE</p>
         </footer>
     </div>
 
@@ -873,7 +873,7 @@
         </div>
     </div>
 
-    <audio id="audio-element" class="hidden" preload="auto"></audio>
+    <audio id="audio-element" class="hidden" preload="metadata"></audio>
 
     <!-- Original Javascript Logic -->
     <script>
@@ -948,7 +948,6 @@
         let gaplessPlayback = false; // Gapless playback setting
         let contextMenuTrack = null; // Track for context menu operations
         let isCrossfading = false; // Flag to track crossfading state
-        let isTrackSwitching = false;
 
         // --- DOM Element Helpers ---
         const G = id => document.getElementById(id);
@@ -1731,97 +1730,89 @@
         }
 
         // --- Media Session API ---
-        // Variable to manage memory for lock screen images
-let activeLockScreenIcon = null;
-
+// --- Updated Media Session API ---
 function updateMediaSession(track) {
     if ('mediaSession' in navigator) {
-        
-        // 1. Artwork Fix (High Res)
-        let artworkUrl = track.thumb || '';
-        if (artworkUrl.includes('-large')) {
-            artworkUrl = artworkUrl.replace('-large', '-t500x500');
-        }
+        // Create an array of sizes to ensure the OS finds a match
+        const artwork = track.thumb ? [
+            { src: track.thumb, sizes: '96x96', type: 'image/jpeg' },
+            { src: track.thumb, sizes: '128x128', type: 'image/jpeg' },
+            { src: track.thumb, sizes: '192x192', type: 'image/jpeg' },
+            { src: track.thumb, sizes: '256x256', type: 'image/jpeg' },
+            { src: track.thumb, sizes: '384x384', type: 'image/jpeg' },
+            { src: track.thumb, sizes: '512x512', type: 'image/jpeg' },
+        ] : [];
 
-        // 2. Set Metadata
         navigator.mediaSession.metadata = new MediaMetadata({
             title: track.title,
             artist: track.performer,
-            album: "SoundCloud Player",
-            artwork: [
-                { src: artworkUrl, sizes: '512x512', type: 'image/jpeg' }
-            ]
+            album: "SoundCloud Player", // Adding album name helps context
+            artwork: artwork
         });
 
-        // 3. Simple Command Handlers
-        // We use simple wrappers to ensure the site UI stays in sync
-        navigator.mediaSession.setActionHandler('play', () => {
-            audio.play();
-            // Note: The audio 'play' event listener will handle the UI updates
-        });
-
-        navigator.mediaSession.setActionHandler('pause', () => {
-            audio.pause();
-            // Note: The audio 'pause' event listener will handle the UI updates
-        });
-
+        // specific handlers linked to your existing functions
+        navigator.mediaSession.setActionHandler('play', () => audio.play());
+        navigator.mediaSession.setActionHandler('pause', () => audio.pause());
         navigator.mediaSession.setActionHandler('previoustrack', playPrev);
         navigator.mediaSession.setActionHandler('nexttrack', playNext);
         
+        // Enable seeking from lockscreen
         navigator.mediaSession.setActionHandler('seekto', (details) => {
-             if (details.fastSeek && 'fastSeek' in audio) audio.fastSeek(details.seekTime);
-             else audio.currentTime = details.seekTime;
+            if (details.fastSeek && 'fastSeek' in audio) {
+                audio.fastSeek(details.seekTime);
+                return;
+            }
+            audio.currentTime = details.seekTime;
         });
     }
 }
 
         // --- Player Core ---
-const playTrack = async (index) => {
-    if (index < 0 || index >= currentPlaylist.length) return;
+        const playTrack = (index) => {
+            if (index < 0 || index >= currentPlaylist.length) return;
+            currentTrackIndex = index;
+            const track = currentPlaylist[index];
+            currentTrack = track;
+            addToPlaybackHistory(track);
 
-    currentTrackIndex = index;
-    const track = currentPlaylist[index];
-    currentTrack = track; // Store global reference
+            G('player-loading-indicator').classList.remove('hidden');
+            G('player-loading-indicator-expanded').classList.remove('hidden');
 
-    // 1. Update UI immediately
-    updatePlayerUI(track);
-    addToPlaybackHistory(track);
-    highlightActiveTrack();
+            // Check if we have the song preloaded in memory
+if (audioCache.has(track.track_url)) {
+    console.log("Playing from instant cache ⚡");
+    audio.src = audioCache.get(track.track_url);
+} else {
+    console.log("Streaming from network 📡");
+    audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
+    
+    // Optional: Cache the current song while it streams (so replaying it is instant)
+    preloadTrack(track); 
+}
+            audio.load();
 
-    // 2. Set Audio Source (Robust Method)
-    const isCached = audioCache.has(track.track_url);
-    if (isCached) {
-        console.log("Attempting Cache Playback ⚡");
-        audio.src = audioCache.get(track.track_url);
-    } else {
-        console.log("Network Streaming 📡");
-        audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
-        // Trigger preload for next track in background
-        if (index + 1 < currentPlaylist.length) {
-            setTimeout(() => preloadTrack(currentPlaylist[index + 1]), 2000);
-        }
+            updateFavoriteButton(track.track_url);
+            queue = currentPlaylist.slice(currentTrackIndex + 1);
+            renderPlayerQueue();
+            updatePlayerUI(track);
+
+            audio.play().catch(e => showToast("Playback restricted. Tap play."));
+            G('persistent-player-container').classList.add('show');
+            highlightActiveTrack();
+            
+            // --- NEW: Trigger Preload for Next Track ---
+    // Check if there is a next track in the playlist
+    if (index + 1 < currentPlaylist.length) {
+        const nextTrack = currentPlaylist[index + 1];
+        // Small delay to let the current song start streaming first
+        setTimeout(() => preloadTrack(nextTrack), 1000); 
     }
-
-    // 3. Play with Error Handling
-    try {
-        await audio.play();
-        setPlayPauseIcons(false);
-        renderPlayerQueue();
-        
-        // Sync Lock Screen State
-        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
-        
-    } catch (e) {
-        console.warn("Playback interrupted or failed", e);
-        
-        // FAIL-SAFE: If Blob failed, force network stream immediately
-        if (isCached) {
-            console.log("Cache failed, falling back to Network...");
-            audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(track.track_url)}`;
-            audio.play().catch(err => console.error("Final playback failure", err));
-        }
+    // Also preload the one after that if on WiFi (optional optimization)
+    if (index + 2 < currentPlaylist.length) {
+        setTimeout(() => preloadTrack(currentPlaylist[index + 2]), 3000); 
     }
-};
+    updateMediaSession(track);
+        };
 
         const playAllFavorites = () => {
             if (favoriteTracksData.length === 0) return;
@@ -1872,7 +1863,7 @@ const playTrack = async (index) => {
             G('player-performer-mini').textContent = track.performer;
             G('player-performer-expanded').textContent = track.performer;
             
-            updateMediaSession(track); 
+            // Background blur for expanded player could be updated here if using dynamic colors
         }
 
         function setPlayPauseIcons(paused) {
@@ -2118,62 +2109,20 @@ const playTrack = async (index) => {
             G('start-sleep-timer').addEventListener('click', startSleepTimer);
 
             // Audio Listeners
-// --- AUDIO EVENT LISTENERS (The Sync Logic) ---
-
-// 1. On Play: Update Site UI + Update Lock Screen State
-audio.addEventListener('play', () => {
-    setPlayPauseIcons(false);
-    renderPlayerQueue();
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing";
+audio.addEventListener('play', () => { 
+    setPlayPauseIcons(false); 
+    renderPlayerQueue(); 
+    // NEW: Tell lock screen we are playing
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
 });
 
-// 2. On Pause: Update Site UI + Update Lock Screen State
-audio.addEventListener('pause', () => {
-    setPlayPauseIcons(true);
-    renderPlayerQueue();
-    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused";
+audio.addEventListener('pause', () => { 
+    setPlayPauseIcons(true); 
+    renderPlayerQueue(); 
+    // NEW: Tell lock screen we are paused
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
 });
-
-// 3. On Error: Auto-Recover
-audio.addEventListener('error', (e) => {
-    console.error("Audio Critical Error:", e);
-    // If the cache blob died, try reloading from network
-    if (audio.src.startsWith('blob:') && currentTrack) {
-        console.log("Recovering from dead blob...");
-        audio.src = `${API_BASE_URL}/api/download?url=${encodeURIComponent(currentTrack.track_url)}`;
-        audio.play();
-    }
-});
-
-// 4. On Track End: Play Next
-audio.addEventListener('ended', () => {
-    playNext();
-});
-
-// 5. App Visibility: Sync UI when unlocking phone
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        setPlayPauseIcons(audio.paused);
-    }
-});
-
-audio.addEventListener('timeupdate', () => {
-    // 1. Update Progress Bar (Existing logic)
-    G('player-current-time').textContent = formatTime(audio.currentTime);
-    if (!isDraggingProgress && audio.duration) {
-        G('player-progress-bar').style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-    }
-
-    // 2. Proactive Track Switching (The Fix)
-    // Check if we are within 0.2 seconds of the end
-    if (audio.duration && audio.currentTime >= audio.duration - 0.2) {
-        if (!isTrackSwitching) {
-            console.log("Proactive track switch triggered ⚡");
-            isTrackSwitching = true; // Lock it so we don't skip twice
-            playNext();
-        }
-    }
-});
+            audio.addEventListener('ended', () => { playNext(); renderPlayerQueue(); });
             audio.addEventListener('loadedmetadata', () => {
                 G('player-total-duration').textContent = formatTime(audio.duration);
                 G('player-loading-indicator').classList.add('hidden');
